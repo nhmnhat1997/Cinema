@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".CreateMovie">
+    tools:context=".CreateMovieActivity">
 
 
     <ScrollView
@@ -22,7 +22,7 @@
             android:id="@+id/linear">
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/filmPicture"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center_vertical|center_horizontal|center"
@@ -96,7 +96,8 @@
                 android:background="@drawable/border"
                 android:cursorVisible="false"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="date"
+                android:maxLength="10" />
 
             <TextView
                 android:id="@+id/tvwDescription"
@@ -122,7 +123,7 @@
                 android:textCursorDrawable="@drawable/cursor" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/post"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal|center"
@@ -131,8 +132,8 @@
                 android:foregroundGravity="center_vertical|center_horizontal|center"
                 android:gravity="center_vertical|center_horizontal|center"
                 android:text="Tạo phim"
-                android:textColor="@android:color/background_light"
-                android:textAllCaps="false"/>
+                android:textAllCaps="false"
+                android:textColor="@android:color/background_light" />
 
         </LinearLayout>
     </ScrollView>
