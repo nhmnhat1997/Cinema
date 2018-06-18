@@ -14,11 +14,11 @@
 
         <ImageView
             android:id="@+id/cover"
-            android:layout_width="110dp"
+            android:layout_width="150dp"
             android:layout_height="140dp"
             android:layout_marginTop="10dp"
-            android:scaleType="centerCrop"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/choose_film" />
 
         <TextView

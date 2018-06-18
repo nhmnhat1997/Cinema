@@ -66,6 +66,7 @@ public class UserFilmDataAdapter extends RecyclerView.Adapter<UserFilmDataAdapte
     public void onBindViewHolder(UserFilmDataAdapter.ViewHolder holder, int position) {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.choose_film);
+        requestOptions.centerCrop();
 
         FilmData.Movie item = mItems.get(position);
         TextView name = holder.txvName;

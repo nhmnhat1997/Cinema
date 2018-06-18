@@ -1,6 +1,8 @@
 package mnhat.whatever.com.cinema;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -36,6 +38,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,11 +69,16 @@ public class ShowProfileActivity extends AppCompatActivity {
     Button changePassword,signOut;
     CircleImageView avatar;
     Animation up, down, left, right;
+    Activity mActivity;
+
+    String domain = "https://nam-cinema.herokuapp.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_profile);
+
+        mActivity = ShowProfileActivity.this;
 
         userName = (TextView) findViewById(R.id.tvUsername);
         email = (TextView) findViewById(R.id.tv_email);
@@ -118,6 +128,7 @@ public class ShowProfileActivity extends AppCompatActivity {
         //RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL);
         //mRecyclerView.addItemDecoration(itemDecoration);
 
+        loadProfile();
         loadList();
 
         avatar.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +163,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                     public void onDismiss(DialogInterface dialogInterface) {
                     }
                 });
-                edtU.setText("Name");
+                edtU.setText(userName.getText());
                 edtU.setSelection(edtU.getText().toString().length());
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
@@ -189,7 +200,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                     public void onDismiss(DialogInterface dialogInterface) {
                     }
                 });
-                edtPhone.setText("0123456789");
+                edtPhone.setText(phoneNum.getText());
                 edtPhone.setSelection(edtPhone.getText().toString().length());
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
@@ -211,18 +222,14 @@ public class ShowProfileActivity extends AppCompatActivity {
                 final EditText edtNewPass2 = v.findViewById(R.id.edt_newPass2);
                 AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
                         .setView(v)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK", null)
+                        .setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
                             }
                         }).setCancelable(false);
-                AlertDialog dialog = builder.create();
+                final AlertDialog dialog = builder.create();
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
@@ -231,6 +238,38 @@ public class ShowProfileActivity extends AppCompatActivity {
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
+                        Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        b.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
+                                if (edtCurrPass.getText().toString().equals("")) {
+                                    Toast.makeText(mActivity, "Vui lòng nhập password cũ.", Toast.LENGTH_LONG).show();
+                                    return;
+                                } else if (edtNewPass1.getText().toString().equals("")) {
+                                    Toast.makeText(mActivity, "Vui lòng nhập password mới.", Toast.LENGTH_LONG).show();
+                                    return;
+                                } else if (edtNewPass2.getText().toString().equals("")) {
+                                    Toast.makeText(mActivity, "Vui lòng lại password mới.", Toast.LENGTH_LONG).show();
+                                    return;
+                                } else if (!edtCurrPass.getText().toString().equals("") && !edtNewPass1.getText().toString().equals("") && !edtNewPass2.getText().toString().equals("")) {
+                                    if (!edtCurrPass.getText().toString().equals(pre_signIn.getString("password",""))){
+                                        Toast.makeText(mActivity, "Password cũ không chính xác.", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    if (edtCurrPass.getText().toString().equals(edtNewPass1.getText().toString())) {
+                                        Toast.makeText(mActivity, "Password cũ và password mới giống nhau. Vui lòng kiểm tra lại", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    if (!edtNewPass1.getText().toString().equals(edtNewPass2.getText().toString())) {
+                                        Toast.makeText(mActivity, "2 Password mới khác nhau. Vui lòng kiểm tra lại", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                changePass(edtCurrPass, edtNewPass1, dialog);
+
+                            }
+                        });
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.showSoftInput(edtCurrPass, InputMethodManager.SHOW_IMPLICIT);
                     }
@@ -528,6 +567,62 @@ public class ShowProfileActivity extends AppCompatActivity {
             public void onFailure(Call<FilmData> call, Throwable t) {
                 t.printStackTrace();
                 Log.d("List Film", "error loading from API");
+            }
+        });
+    }
+
+    public void changePass(EditText oldPass, EditText newPass, final AlertDialog dialog){
+        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+        String token = pre.getString("token","");
+        final ProgressDialog loadDialog = new ProgressDialog(ShowProfileActivity.this,R.style.AlertDialogCustom);
+        loadDialog.setMessage("Loading");
+        loadDialog.show();
+        mService.changePass(token,oldPass.getText().toString(),newPass.getText().toString()).enqueue(new Callback<Password>() {
+            @Override
+            public void onResponse(Call<Password> call, Response<Password> response) {
+                if (response.isSuccessful()){
+                    //SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
+                    //SharedPreferences.Editor logIn = pre_signIn.edit();
+                    Toast.makeText(mActivity,"Đổi mật khẩu thành công",Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
+                    dialog.dismiss();
+                }
+                else{
+                    Toast.makeText(mActivity,response.message(),Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
+                    dialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Password> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void loadProfile(){
+        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+        String token = pre.getString("token","");
+        mService.getProfileInfo(token).enqueue(new Callback<UserProfileData>() {
+            @Override
+            public void onResponse(Call<UserProfileData> call, Response<UserProfileData> response) {
+                if (response.isSuccessful()){
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.placeholder(R.drawable.user);
+                    userName.setText(response.body().getUser().getUsername());
+                    email.setText(response.body().getUser().getEmail());
+                    phoneNum.setText(response.body().getUser().getPhone());
+                    Glide.with(mActivity).setDefaultRequestOptions(requestOptions).load(domain + response.body().getUser().getAvatar()).into(avatar);
+                }
+                else {
+                    Toast.makeText(ShowProfileActivity.this,response.message(),Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfileData> call, Throwable t) {
+
             }
         });
     }

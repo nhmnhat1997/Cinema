@@ -92,4 +92,27 @@ public class UserProfileData {
 
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public SignInResponse.User getUser() {
+        return user;
+    }
+
+    public void setUser(SignInResponse.User user) {
+        this.user = user;
+    }
 }

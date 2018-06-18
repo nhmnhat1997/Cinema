@@ -37,6 +37,12 @@ public interface APIService {
                                 @Field("password") String password);
 
     @GET("/api/v1/users/")
-    Call<ProfileInfo> getProfileInfo(@Header("x-access-token") String token);
+    Call<UserProfileData> getProfileInfo(@Header("x-access-token") String token);
+
+    @POST("/api/v1/auth/change-password/")
+    @FormUrlEncoded
+    Call<Password> changePass(@Header("x-access-token") String token,
+                              @Field("oldPassword") String oldPassword,
+                              @Field("password") String password);
 
 }
