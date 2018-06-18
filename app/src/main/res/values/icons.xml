@@ -5,4 +5,7 @@
     <string name="fa_icon_person">&#xf007;</string>
     <string name="fa_icon_mail">&#xf0e0;</string>
     <string name="fa_icon_lock">&#xf023;</string>
+    <string name="fa_icon_user">&#xf2bd;</string>
+    <string name="fa_icon_phone">&#xf095;</string>
+    <string name="fa_icon_edit">&#xf044;</string>
 </resources>

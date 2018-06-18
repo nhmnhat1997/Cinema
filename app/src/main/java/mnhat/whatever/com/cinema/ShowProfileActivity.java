@@ -1,176 +1,220 @@
 package mnhat.whatever.com.cinema;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+public class ShowProfileActivity extends AppCompatActivity {
 
-public class CreateMovieActivity extends AppCompatActivity {
-    String myFormat = "dd/MM/yyyy";
-    SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
-    Utility util = new Utility();
-
-    private APIService mAPIService;
+    private UserFilmDataAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private APIService mService;
     private File mImageFile;
-
-
-
-    EditText filmName, date, description;
-    Spinner gerne;
-    Button choosePicture, post;
-    ImageView picture;
-    Bitmap oriPic, newPic;
-    String userChoosenTask;
 
     public static final int CAMERA = 1;
     public static final int GALLERY = 0;
 
-    Activity mActivity;
 
-
-    Calendar myCalendar = Calendar.getInstance();
-    DatePickerDialog.OnDateSetListener releaseDate = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
-            myCalendar.set(Calendar.YEAR,i);
-            myCalendar.set(Calendar.MONTH,i1);
-            myCalendar.set(Calendar.DAY_OF_MONTH,i2);
-            updateDate(date);
-        }
-    };
+    TextView userName,email,phoneNum;
+    LinearLayout editPhoneNum,editUsername;
+    Button changePassword,signOut;
+    CircleImageView avatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_movie);
-        getSupportActionBar().setTitle("Thêm thông tin phim");
+        setContentView(R.layout.activity_show_profile);
 
-        mActivity = this;
+        userName = (TextView) findViewById(R.id.tvUsername);
+        email = (TextView) findViewById(R.id.tv_email);
+        phoneNum = (TextView) findViewById(R.id.tv_phone);
 
-        filmName = (EditText) findViewById(R.id.edtFilmName);
-        date = (EditText) findViewById(R.id.edtReleaseDate);
-        description = (EditText) findViewById(R.id.edtDescription);
-        gerne = (Spinner) findViewById(R.id.spGerne);
-        choosePicture = (Button) findViewById(R.id.btnChoosePicture);
-        post = (Button) findViewById(R.id.post);
-        picture = (ImageView) findViewById(R.id.filmPicture);
+        editUsername = (LinearLayout) findViewById(R.id.layout_changeName);
+        editPhoneNum = (LinearLayout) findViewById(R.id.layout_changePhone);
 
-        oriPic = ((BitmapDrawable) picture.getDrawable()).getBitmap();
+        changePassword = (Button) findViewById(R.id.btn_changePass);
+        signOut = (Button) findViewById(R.id.btn_signOut);
 
-        Date current = Calendar.getInstance().getTime();
-        String currentDate = sdf.format(current);
-        date.setText(currentDate);
+        avatar = (CircleImageView) findViewById(R.id.imgv_avatar);
 
-        findViewById(R.id.linear).setOnTouchListener(new View.OnTouchListener() {
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.rvUserListFilm);
+        mService = APIUtils.getAPIService();
+        mAdapter = new UserFilmDataAdapter(this, new ArrayList<FilmData.Movie>(0), new UserFilmDataAdapter.PostItemListener() {
+
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                hideKeyboard(view);
-                return true;
+            public void onPostClick(long id) {
+                Toast.makeText(ShowProfileActivity.this, "Post id is" + id, Toast.LENGTH_SHORT).show();
             }
         });
 
-        choosePicture.setOnClickListener(new View.OnClickListener() {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ShowProfileActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        //RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL);
+        //mRecyclerView.addItemDecoration(itemDecoration);
+
+        loadList();
+
+        avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectImage();
-
             }
         });
 
-        String[] bTypeSpinner = new String[] {
-                "Hành động", "Tâm lý", "Kinh dị", "Khoa học viễn tưởng", "Hài"
-        };
-        ArrayAdapter<String> gerneAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, bTypeSpinner);
-        gerneAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        gerne.setAdapter(gerneAdapter);
-
-        date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b){
-                    hideKeyboard(view);
-                }
-            }
-        });
-
-        date.setOnClickListener(new View.OnClickListener() {
+        editUsername.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_username,null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                        .setView(v)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
-                hideKeyboard(view);
-                DatePickerDialog dialog = new DatePickerDialog(CreateMovieActivity.this,releaseDate,myCalendar.get(Calendar.YEAR),
-                        myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH));
+                            }
+                        }).setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).setCancelable(false);
+                AlertDialog dialog = builder.create();
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                    }
+                });
                 dialog.show();
             }
         });
 
-        post.setOnClickListener(new View.OnClickListener() {
+        editPhoneNum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                newPic = ((BitmapDrawable)picture.getDrawable()).getBitmap();
-                if (oriPic.sameAs(newPic)){
-                    Toast.makeText(CreateMovieActivity.this,"Hãy chọn ảnh cho phim",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_phone,null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                        .setView(v)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
-                if (util.checkFilmValidate(filmName,date) == 1){
-                    Toast.makeText(CreateMovieActivity.this,"Hãy nhập tên phim",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (util.checkFilmValidate(filmName,date) == 2){
-                    Toast.makeText(CreateMovieActivity.this,"Nhập thời gian đúng định dạng.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (util.checkFilmValidate(filmName,date) == 0){
-                    createMovie();
-                }
+                            }
+                        }).setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
+                            }
+                        }).setCancelable(false);
+                AlertDialog dialog = builder.create();
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                    }
+                });
+                dialog.show();
+            }
+        });
 
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_password,null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                        .setView(v)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).setCancelable(false);
+                AlertDialog dialog = builder.create();
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                    }
+                });
+                dialog.show();
+
+            }
+        });
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                        .setMessage("Bạn có chắc chắn muốn đăng xuất ?")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pre.edit();
+                                editor.clear();
+                                editor.commit();
+                                Intent intent = new Intent(ShowProfileActivity.this, SignInActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        }).setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).setCancelable(false);
+                AlertDialog dialog = builder.create();
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                    }
+                });
+                dialog.show();
 
 
             }
@@ -178,16 +222,8 @@ public class CreateMovieActivity extends AppCompatActivity {
 
     }
 
-
-    public void updateDate(EditText Time){
-        Time.setText(sdf.format(myCalendar.getTime()));
-    }
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
     private void selectImage() {
-        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
+        android.app.AlertDialog.Builder pictureDialog = new android.app.AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
                 "Select photo from gallery",
@@ -242,21 +278,21 @@ public class CreateMovieActivity extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    picture.setImageBitmap(bitmap);
+                    avatar.setImageBitmap(bitmap);
                     mImageFile = new File(getPath(this,contentURI));
                     //saveImage(bitmap,requestCode);
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(CreateMovieActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShowProfileActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
             }
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             saveImage(thumbnail,requestCode);
-            picture.setImageBitmap(thumbnail);
-            Toast.makeText(CreateMovieActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            avatar.setImageBitmap(thumbnail);
+            Toast.makeText(ShowProfileActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
     public String saveImage(Bitmap myBitmap, int requestCode) {
@@ -423,43 +459,25 @@ public class CreateMovieActivity extends AppCompatActivity {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public void createMovie(){
-        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), mImageFile);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("cover", mImageFile.getName(), reqFile);
-
-// create a map of data to pass along
-        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), filmName.getText().toString());
-        RequestBody genre = RequestBody.create(MediaType.parse("text/plain"),gerne.getSelectedItem().toString());
-        RequestBody release = RequestBody.create(MediaType.parse("text/plain"), date.getText().toString());
-        RequestBody descript = RequestBody.create(MediaType.parse("text/plain"), description.getText().toString());
-
-        HashMap<String, RequestBody> map = new HashMap<>();
-        map.put("title", title);
-        map.put("genre", genre);
-        map.put("release", release);
-        map.put("description", descript);
-
-        mAPIService = APIUtils.getAPIService();
-        mAPIService.uploadFileWithPartMap( map, body).enqueue(new Callback<ResponseBody>() {
+    public void loadList(){
+        mService.getFilmData().enqueue(new Callback<FilmData>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful()) {
-                    Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(CreateMovieActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
-                    mActivity.finish();
+            public void onResponse(Call<FilmData> call, Response<FilmData> response) {
+                if (response.isSuccessful()){
+                    mAdapter.updateData(response.body().getMovies());
                 }
                 else{
-                    Toast.makeText(CreateMovieActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ShowProfileActivity.this,response.message(),Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<FilmData> call, Throwable t) {
                 t.printStackTrace();
+                Log.d("List Film", "error loading from API");
             }
         });
-
-
-
     }
+
+    //x-access-token
 }
