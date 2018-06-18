@@ -2,9 +2,11 @@ package mnhat.whatever.com.cinema;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -64,7 +66,7 @@ public class SignInActivity extends AppCompatActivity {
 
         mAPIService = APIUtils.getAPIService();
 
-        signIn.setOnClickListener(new View.OnClickListener() {
+        /*signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int valid = util.checkSignInValidate(email,password);
@@ -86,13 +88,70 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 }
             }
+        });*/
+
+        signIn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:{
+                        int valid = util.checkSignInValidate(email,password);
+                        switch (valid){
+                            case 1:{
+                                Toast.makeText(SignInActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                            case 2:{
+                                Toast.makeText(SignInActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                            case 11:{
+                                Toast.makeText(SignInActivity.this,"Email không đúng định dạng. Vui lòng kiểm tra lại",Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                            case 0:{
+                                goSignIn(email,password);
+                            }
+                        }
+                    }
+                        // Your action here on button click
+                    case MotionEvent.ACTION_CANCEL: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
         });
 
-        signUp.setOnClickListener(new View.OnClickListener() {
+
+        signUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignInActivity.this,SignUpActivity.class);
-                startActivity(intent);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:{
+                        Intent intent = new Intent(SignInActivity.this,SignUpActivity.class);
+                        startActivity(intent);
+                    }
+                    // Your action here on button click
+                    case MotionEvent.ACTION_CANCEL: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
             }
         });
     }
