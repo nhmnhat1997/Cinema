@@ -1,5 +1,6 @@
 package mnhat.whatever.com.cinema;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -155,6 +156,9 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void goSignIn(final EditText email, final EditText password){
+        final ProgressDialog loadDialog = new ProgressDialog(SignInActivity.this,R.style.AlertDialogCustom);
+        loadDialog.setMessage("Loading");
+        loadDialog.show();
         mAPIService.singIn(email.getText().toString(),password.getText().toString()).enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
@@ -177,12 +181,14 @@ public class SignInActivity extends AppCompatActivity {
                     logIn.putString("password",p);
                     logIn.commit();
                     Intent intent = new Intent(SignInActivity.this, ListFilmActivity.class);
+                    loadDialog.dismiss();
                     startActivity(intent);
                     finish();
 
                 }
                 else{
                     Log.e("onResponse", response.message() + "__" + response.toString());
+                    loadDialog.dismiss();
                     Toast.makeText(SignInActivity.this,response.message(),Toast.LENGTH_LONG).show();
                     return;
                 }
