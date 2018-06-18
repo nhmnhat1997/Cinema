@@ -1,8 +1,11 @@
 package mnhat.whatever.com.cinema;
 
+import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -57,45 +60,61 @@ public class SignUpActivity extends AppCompatActivity {
         btn_signUp.setAnimation(up);
 
         mAPIService = APIUtils.getAPIService();
-        btn_signUp.setOnClickListener(new View.OnClickListener() {
+
+        btn_signUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                int validate = util.checkSignUpValidate(edt_userName,edt_email,edt_password,edt_rePassword);
-                switch (validate) {
-                    case 1:{
-                        Toast.makeText(SignUpActivity.this,"Vui lòng nhập Username",Toast.LENGTH_LONG).show();
-                        return;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
                     }
+                    case MotionEvent.ACTION_UP:{
+                        int validate = util.checkSignUpValidate(edt_userName,edt_email,edt_password,edt_rePassword);
+                        switch (validate) {
+                            case 1:{
+                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Username",Toast.LENGTH_LONG).show();
+                                break;
+                            }
 
-                    case 2:{
-                        Toast.makeText(SignUpActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG).show();
-                        return;
-                    }
+                            case 2:{
+                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG).show();
+                                break;
+                            }
 
-                    case 21:{
-                        Toast.makeText(SignUpActivity.this,"Email không hợp lệ. Vui lòng nhập lại",Toast.LENGTH_LONG).show();
-                        return;
-                    }
+                            case 21:{
+                                Toast.makeText(SignUpActivity.this,"Email không hợp lệ. Vui lòng nhập lại",Toast.LENGTH_LONG).show();
+                                break;
+                            }
 
-                    case 3:{
-                        Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG).show();
-                        return;
-                    }
+                            case 3:{
+                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG).show();
+                                break;
+                            }
 
-                    case 4:{
-                        Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password lần hai",Toast.LENGTH_LONG).show();
-                        return;
-                    }
+                            case 4:{
+                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password lần hai",Toast.LENGTH_LONG).show();
+                                break;
+                            }
 
-                    case 34:{
-                        Toast.makeText(SignUpActivity.this,"2 Password không giống nhau. Vui lòng nhập lại",Toast.LENGTH_LONG).show();
-                        return;
+                            case 34:{
+                                Toast.makeText(SignUpActivity.this,"2 Password không giống nhau. Vui lòng nhập lại",Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                            case 0:{
+                                signUP(edt_userName,edt_email,edt_password);
+                            }
+                        }
                     }
-                    case 0:{
-                        signUP(edt_userName,edt_email,edt_password);
+                    // Your action here on button click
+                    case MotionEvent.ACTION_CANCEL: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
                     }
                 }
-
+                return true;
             }
         });
 

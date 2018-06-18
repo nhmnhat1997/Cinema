@@ -66,29 +66,6 @@ public class SignInActivity extends AppCompatActivity {
 
         mAPIService = APIUtils.getAPIService();
 
-        /*signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int valid = util.checkSignInValidate(email,password);
-                switch (valid){
-                    case 1:{
-                        Toast.makeText(SignInActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    case 2:{
-                        Toast.makeText(SignInActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    case 11:{
-                        Toast.makeText(SignInActivity.this,"Email không đúng định dạng. Vui lòng kiểm tra lại",Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    case 0:{
-                        goSignIn(email,password);
-                    }
-                }
-            }
-        });*/
 
         signIn.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -168,7 +145,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void goSignIn(EditText email, EditText password){
+    public void goSignIn(final EditText email, final EditText password){
         mAPIService.singIn(email.getText().toString(),password.getText().toString()).enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
@@ -182,6 +159,8 @@ public class SignInActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = pre.edit();
                     editor.putString("token",token);
                     editor.putBoolean("isLogin",isLogin);
+                    editor.putString("email",email.getText().toString());
+                    editor.putString("password",password.getText().toString());
                     editor.commit();
                     Intent intent = new Intent(SignInActivity.this, ListFilmActivity.class);
                     startActivity(intent);
