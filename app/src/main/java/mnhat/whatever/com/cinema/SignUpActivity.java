@@ -1,5 +1,6 @@
 package mnhat.whatever.com.cinema;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
@@ -125,16 +126,21 @@ public class SignUpActivity extends AppCompatActivity {
         data.setEmail(email.getText().toString());
         data.setUsername(username.getText().toString());
         data.setPassword(password.getText().toString());
+        final ProgressDialog loadDialog = new ProgressDialog(SignUpActivity.this,R.style.AlertDialogCustom);
+        loadDialog.setMessage("Loading");
+        loadDialog.show();
         mAPIService.signUpInfo(data).enqueue(new Callback<SignUpData>() {
             @Override
             public void onResponse(Call<SignUpData> call, Response<SignUpData> response) {
                 if (response.isSuccessful()){
                     Log.e("onResponse", response.message() + "__" + response.toString());
                     Toast.makeText(SignUpActivity.this," Đăng ký thành công!",Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
                 }
                 else {
                     Log.e("onResponse", response.message() + "__" + response.toString());
                     Toast.makeText(SignUpActivity.this,response.message(),Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
                     return;
                 }
             }
