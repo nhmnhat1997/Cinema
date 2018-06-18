@@ -6,8 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -17,7 +20,10 @@ import retrofit2.Response;
 public class SignInActivity extends AppCompatActivity {
 
     EditText email, password;
+    TextView tSignIn, tOr;
+    IconTextView tEmail, tPassword;
     Button signIn, signUp;
+    Animation up, down, left, right;
     Utility util = new Utility();
     APIService mAPIService;
     @Override
@@ -37,6 +43,24 @@ public class SignInActivity extends AppCompatActivity {
         password = (EditText) findViewById(R.id.et_Password);
         signIn = (Button) findViewById(R.id.btn_SignIn);
         signUp = (Button) findViewById(R.id.btn_SignUp);
+        tSignIn = (TextView) findViewById(R.id.tv_sign_in);
+        tOr = (TextView) findViewById(R.id.tv_or);
+        tEmail = (IconTextView) findViewById(R.id.tv_mail_icon);
+        tPassword = (IconTextView) findViewById(R.id.tv_lock_icon1);
+
+        up = AnimationUtils.loadAnimation(SignInActivity.this,R.anim.up);
+        down = AnimationUtils.loadAnimation(SignInActivity.this,R.anim.down);
+        left = AnimationUtils.loadAnimation(SignInActivity.this,R.anim.left);
+        right = AnimationUtils.loadAnimation(SignInActivity.this,R.anim.right);
+
+        signIn.startAnimation(up);
+        signUp.startAnimation(up);
+        tOr.startAnimation(up);
+        tSignIn.startAnimation(down);
+        tEmail.startAnimation(left);
+        tPassword.startAnimation(left);
+        email.startAnimation(right);
+        password.startAnimation(right);
 
         mAPIService = APIUtils.getAPIService();
 
