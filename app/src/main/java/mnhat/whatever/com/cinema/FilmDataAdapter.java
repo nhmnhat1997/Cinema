@@ -80,6 +80,11 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
         ImageView cover = holder.cover;
         Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(domain + item.getCover()).into(cover);
         name.setText(item.getTitle());
+        if(name.getLineCount() > 1){
+            int lineEndIndex = name.getLayout().getLineEnd(0);
+            String text = name.getText().subSequence(0, lineEndIndex - 3) + "\u2026";
+            name.setText(text);
+        }
         gerne.setText(item.getGenre());
         date.setText(item.getDate());
     }

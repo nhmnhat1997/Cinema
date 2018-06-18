@@ -1,58 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="125dp"
         android:orientation="horizontal"
-        android:padding="10dp"
-        >
+        android:padding="10dp">
+
         <ImageView
             android:id="@+id/img_cover"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:scaleType="centerCrop"
-            />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
             android:orientation="vertical"
             android:paddingLeft="3dp">
+
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:minLines="2"
+                android:text="Title"
                 android:textColor="@color/colorPrimary"
                 android:textSize="15dp"
-                android:layout_marginTop="7dp"
-                android:text="Title"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:orientation="horizontal"
                 android:layout_marginTop="7dp"
-                >
+                android:orientation="horizontal">
+
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight=".45"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
+                    android:layout_weight=".45"
                     android:gravity="center_vertical"
-                    >
+                    android:orientation="horizontal">
+
                     <mnhat.whatever.com.cinema.IconTextView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:text="@string/fa_icon_camera"
-                        android:textSize="20dp"
                         android:textColor="@color/colorPrimary"
-                        />
+                        android:textSize="20dp" />
 
                     <TextView
                         android:id="@+id/tv_genre"
@@ -61,62 +63,65 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:paddingLeft="5dp"
-                        android:text="00/00/0000"/>
+                        android:text="00/00/0000" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_weight="0.06"
-                    android:layout_height="match_parent"></LinearLayout>
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight=".45"
                     android:layout_height="match_parent"
+                    android:layout_weight="0.06"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".45"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <mnhat.whatever.com.cinema.IconTextView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:text="@string/fa_icon_calendar"
-                        android:textSize="20dp"
                         android:textColor="@color/colorPrimary"
-                        />
+                        android:textSize="20dp" />
+
                     <TextView
                         android:id="@+id/tv_release"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="00/00/0000"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:paddingLeft="5dp"
-                        />
+                        android:text="00/00/0000" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_marginTop="7dp"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
-                >
+                android:orientation="horizontal">
+
                 <mnhat.whatever.com.cinema.IconTextView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:text="@string/fa_icon_person"
-                    android:textSize="20dp"
                     android:textColor="@color/colorPrimary"
-                    />
+                    android:textSize="20dp" />
+
                 <TextView
                     android:id="@+id/tv_user_id"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="123456789"
+                    android:layout_height="match_parent"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:paddingLeft="5dp"
-                    />
+                    android:text="123456789" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
