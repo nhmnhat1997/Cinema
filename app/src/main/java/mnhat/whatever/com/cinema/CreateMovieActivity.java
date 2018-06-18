@@ -107,10 +107,6 @@ public class CreateMovieActivity extends AppCompatActivity {
         tDate = (TextView) findViewById(R.id.tvwReleaseDate);
         tDescription = (TextView) findViewById(R.id.tvwDescription);
 
-        up = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.up);
-        down = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.down);
-        left = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.left);
-        right = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.right);
 
         picture.setAnimation(down);
         choosePicture.setAnimation(down);
