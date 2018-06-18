@@ -1,5 +1,6 @@
 package mnhat.whatever.com.cinema;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,8 +12,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +34,7 @@ public class SignInActivity extends AppCompatActivity {
     Utility util = new Utility();
     APIService mAPIService;
     String e,p;
+    ScrollView screen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,7 @@ public class SignInActivity extends AppCompatActivity {
         tOr = (TextView) findViewById(R.id.tv_or);
         tEmail = (IconTextView) findViewById(R.id.tv_mail_icon);
         tPassword = (IconTextView) findViewById(R.id.tv_lock_icon1);
+        screen = (ScrollView) findViewById(R.id.screen);
 
         SharedPreferences temp = getSharedPreferences("signInLog",MODE_PRIVATE);
         email.setText(temp.getString("email",""));
@@ -76,6 +82,13 @@ public class SignInActivity extends AppCompatActivity {
 
         mAPIService = APIUtils.getAPIService();
 
+        screen.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                hideKeyboard(view);
+                return true;
+            }
+        });
 
         signIn.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -199,5 +212,9 @@ public class SignInActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

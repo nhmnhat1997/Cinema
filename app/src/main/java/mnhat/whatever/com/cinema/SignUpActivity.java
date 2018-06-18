@@ -2,6 +2,7 @@ package mnhat.whatever.com.cinema;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,10 +25,11 @@ public class SignUpActivity extends AppCompatActivity {
     EditText edt_userName,edt_email,edt_password,edt_rePassword;
     IconTextView icUsername,icMail,icPass1,icPass2;
     TextView tSignUp;
-    Button btn_signUp;
+    Button btn_signUp, btn_signIn;
     Utility util = new Utility();
     APIService mAPIService;
     Animation up, down, left, right;
+    String e,p;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,7 @@ public class SignUpActivity extends AppCompatActivity {
         edt_password = (EditText) findViewById(R.id.et_Password);
         edt_rePassword = (EditText) findViewById(R.id.et_ReEnterPass);
         btn_signUp = (Button) findViewById(R.id.btn_SignUp);
+        btn_signIn = (Button) findViewById(R.id.btn_SignIn);
         icUsername = (IconTextView) findViewById(R.id.tv_user_icon);
         icMail = (IconTextView) findViewById(R.id.tv_mail_icon);
         icPass1 = (IconTextView) findViewById(R.id.tv_lock_icon1);
@@ -59,8 +62,36 @@ public class SignUpActivity extends AppCompatActivity {
         edt_password.setAnimation(right);
         edt_rePassword.setAnimation(right);
         btn_signUp.setAnimation(up);
+        btn_signIn.setAnimation(up);
 
         mAPIService = APIUtils.getAPIService();
+
+        btn_signIn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        {
+                            Intent intent = new Intent(SignUpActivity.this,SignInActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    }
+                    // Your action here on button click
+                    case MotionEvent.ACTION_CANCEL: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
         btn_signUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -121,7 +152,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void signUP(EditText username, EditText email, EditText password){
+    public void signUP(final EditText username, final EditText email, final EditText password){
         SignUpData data = new SignUpData();
         data.setEmail(email.getText().toString());
         data.setUsername(username.getText().toString());
@@ -136,17 +167,62 @@ public class SignUpActivity extends AppCompatActivity {
                     Log.e("onResponse", response.message() + "__" + response.toString());
                     Toast.makeText(SignUpActivity.this," Đăng ký thành công!",Toast.LENGTH_LONG).show();
                     loadDialog.dismiss();
+                    goSignIn(email,password);
+
                 }
                 else {
                     Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(SignUpActivity.this,response.message(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this,"Tài khoản đã tồn tại. Vui lòng kiểm tra lại",Toast.LENGTH_LONG).show();
                     loadDialog.dismiss();
-                    return;
+
                 }
             }
 
             @Override
             public void onFailure(Call<SignUpData> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void goSignIn(final EditText email, final EditText password){
+        final ProgressDialog loadDialog = new ProgressDialog(SignUpActivity.this,R.style.AlertDialogCustom);
+        loadDialog.setMessage("Loading");
+        loadDialog.show();
+        mAPIService.singIn(email.getText().toString(),password.getText().toString()).enqueue(new Callback<SignInResponse>() {
+            @Override
+            public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
+                if (response.isSuccessful()){
+                    Log.e("onResponse", response.message() + "__" + response.toString());
+                    //Toast.makeText(SignUpActivity.this," Đăng nhập thành công!",Toast.LENGTH_LONG).show();
+
+                    Boolean isLogin = true;
+                    String token = response.body().getToken();
+                    e = email.getText().toString();
+                    p = password.getText().toString();
+                    SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pre.edit();
+                    editor.putString("token",token);
+                    editor.putBoolean("isLogin",isLogin);
+                    editor.commit();
+                    SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
+                    SharedPreferences.Editor logIn = pre_signIn.edit();
+                    logIn.putString("email",e);
+                    logIn.putString("password",p);
+                    logIn.commit();
+                    Intent intent = new Intent(SignUpActivity.this, ListFilmActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    loadDialog.dismiss();
+                    startActivity(intent);
+                    finish();
+
+                }
+                else{
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
 
             }
         });
