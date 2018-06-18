@@ -26,6 +26,8 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,9 +59,10 @@ public class ShowProfileActivity extends AppCompatActivity {
 
 
     TextView userName,email,phoneNum;
-    LinearLayout editPhoneNum,editUsername;
+    LinearLayout editPhoneNum,editUsername,basicInfo,mail,phone,btn;
     Button changePassword,signOut;
     CircleImageView avatar;
+    Animation up, down, left, right;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +75,30 @@ public class ShowProfileActivity extends AppCompatActivity {
 
         editUsername = (LinearLayout) findViewById(R.id.layout_changeName);
         editPhoneNum = (LinearLayout) findViewById(R.id.layout_changePhone);
+        basicInfo = (LinearLayout) findViewById(R.id.layout_basicInfo);
+        mail = (LinearLayout) findViewById(R.id.layout_mail);
+        phone = (LinearLayout) findViewById(R.id.layout_phone);
+        btn = (LinearLayout) findViewById(R.id.layout_button);
 
         changePassword = (Button) findViewById(R.id.btn_changePass);
         signOut = (Button) findViewById(R.id.btn_signOut);
 
         avatar = (CircleImageView) findViewById(R.id.imgv_avatar);
 
-
         mRecyclerView = (RecyclerView) findViewById(R.id.rvUserListFilm);
+
+        up = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.up);
+        down = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.down);
+        left = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.left);
+        right = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.right);
+
+        avatar.setAnimation(down);
+        basicInfo.setAnimation(down);
+        mRecyclerView.setAnimation(left);
+        phone.setAnimation(left);
+        mail.setAnimation(left);
+        btn.setAnimation(up);
+
         mService = APIUtils.getAPIService();
         mAdapter = new UserFilmDataAdapter(this, new ArrayList<FilmData.Movie>(0), new UserFilmDataAdapter.PostItemListener() {
 
