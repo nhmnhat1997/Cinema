@@ -97,7 +97,6 @@ public class ShowProfileActivity extends AppCompatActivity {
         mRecyclerView.setAnimation(left);
         phone.setAnimation(left);
         mail.setAnimation(left);
-        btn.setAnimation(up);
 
         mService = APIUtils.getAPIService();
         mAdapter = new UserFilmDataAdapter(this, new ArrayList<FilmData.Movie>(0), new UserFilmDataAdapter.PostItemListener() {
