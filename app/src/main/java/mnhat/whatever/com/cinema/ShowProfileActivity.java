@@ -47,7 +47,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -178,7 +181,9 @@ public class ShowProfileActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 if (edtU.getText().toString().equals("")){
-                                    Toast.makeText(mActivity, "Vui lòng nhập username mới.", Toast.LENGTH_LONG).show();
+                                    Toast t = Toast.makeText(mActivity, "Vui lòng nhập username mới.", Toast.LENGTH_LONG);
+                                    t.getView().setBackgroundColor(R.drawable.toast);
+                                    t.show();
                                     return;
                                 }
                                 updateProfile(null,edtU,dialog);
@@ -223,7 +228,9 @@ public class ShowProfileActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 if (edtPhone.getText().toString().equals("")){
-                                    Toast.makeText(mActivity, "Vui lòng nhập số điện thoại mới.", Toast.LENGTH_LONG).show();
+                                    Toast t = Toast.makeText(mActivity, "Vui lòng nhập số điện thoại mới.", Toast.LENGTH_LONG);
+                                    t.getView().setBackgroundColor(R.drawable.toast);
+                                    t.show();
                                     return;
                                 }
                                 updateProfile(edtPhone,null,dialog);
@@ -269,25 +276,31 @@ public class ShowProfileActivity extends AppCompatActivity {
                             public void onClick(View view) {
                                 SharedPreferences pre_signIn = getSharedPreferences("signInLog", MODE_PRIVATE);
                                 if (edtCurrPass.getText().toString().equals("")) {
-                                    Toast.makeText(mActivity, "Vui lòng nhập password cũ.", Toast.LENGTH_LONG).show();
+                                    Toast t = Toast.makeText(mActivity, "Vui lòng nhập password hiện tại.", Toast.LENGTH_LONG);
+                                    t.getView().setBackgroundColor(R.drawable.toast);
+                                    t.show();
                                     return;
                                 } else if (edtNewPass1.getText().toString().equals("")) {
-                                    Toast.makeText(mActivity, "Vui lòng nhập password mới.", Toast.LENGTH_LONG).show();
+                                    Toast t = Toast.makeText(mActivity, "Vui lòng nhập password mới.", Toast.LENGTH_LONG);
+                                    t.getView().setBackgroundColor(R.drawable.toast);
+                                    t.show();
                                     return;
                                 } else if (edtNewPass2.getText().toString().equals("")) {
-                                    Toast.makeText(mActivity, "Vui lòng lại password mới.", Toast.LENGTH_LONG).show();
+                                    Toast t = Toast.makeText(mActivity, "Vui lòng lại password mới.", Toast.LENGTH_LONG);
+                                    t.getView().setBackgroundColor(R.drawable.toast);
+                                    t.show();
                                     return;
                                 } else if (!edtCurrPass.getText().toString().equals("") && !edtNewPass1.getText().toString().equals("") && !edtNewPass2.getText().toString().equals("")) {
-                                    if (!edtCurrPass.getText().toString().equals(pre_signIn.getString("password", ""))) {
-                                        Toast.makeText(mActivity, "Password cũ không chính xác.", Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
                                     if (edtCurrPass.getText().toString().equals(edtNewPass1.getText().toString())) {
-                                        Toast.makeText(mActivity, "Password cũ và password mới giống nhau. Vui lòng kiểm tra lại", Toast.LENGTH_LONG).show();
+                                        Toast t = Toast.makeText(mActivity, "Password hiện tại và password mới giống nhau. Vui lòng kiểm tra lại", Toast.LENGTH_LONG);
+                                        t.getView().setBackgroundColor(R.drawable.toast);
+                                        t.show();
                                         return;
                                     }
                                     if (!edtNewPass1.getText().toString().equals(edtNewPass2.getText().toString())) {
-                                        Toast.makeText(mActivity, "2 Password mới khác nhau. Vui lòng kiểm tra lại", Toast.LENGTH_LONG).show();
+                                        Toast t = Toast.makeText(mActivity, "2 Password mới khác nhau. Vui lòng kiểm tra lại", Toast.LENGTH_LONG);
+                                        t.getView().setBackgroundColor(R.drawable.toast);
+                                        t.show();
                                         return;
                                     }
                                 }
@@ -404,7 +417,9 @@ public class ShowProfileActivity extends AppCompatActivity {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(ShowProfileActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast t = Toast.makeText(ShowProfileActivity.this, "Thất bại!", Toast.LENGTH_SHORT);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                 }
             }
 
@@ -413,7 +428,9 @@ public class ShowProfileActivity extends AppCompatActivity {
             saveImage(thumbnail, requestCode);
             avatar.setImageBitmap(thumbnail);
             updateAvatar(userName,phoneNum);
-            Toast.makeText(ShowProfileActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            Toast t = Toast.makeText(ShowProfileActivity.this, "Ảnh đã lưu!", Toast.LENGTH_SHORT);
+            t.getView().setBackgroundColor(R.drawable.toast);
+            t.show();
         }
     }
 
@@ -586,7 +603,9 @@ public class ShowProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<FilmData> call, Response<FilmData> response) {
                 if (response.isSuccessful()) {
-                    mAdapter.updateData(response.body().getMovies());
+                    List<FilmData.Movie> temp = response.body().getMovies();
+                    Collections.reverse(temp);
+                    mAdapter.updateData(temp);
                 } else {
                     Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
                 }
@@ -612,11 +631,15 @@ public class ShowProfileActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     //SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
                     //SharedPreferences.Editor logIn = pre_signIn.edit();
-                    Toast.makeText(mActivity, "Đổi mật khẩu thành công", Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(mActivity, "Đổi mật khẩu thành công", Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                     dialog.dismiss();
                 } else {
-                    Toast.makeText(mActivity, response.message(), Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(mActivity, "Mật khẩu hiện tại không chính xác. Vui lòng kiểm tra lại.", Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                     dialog.dismiss();
                 }
@@ -683,11 +706,15 @@ public class ShowProfileActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(ShowProfileActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(ShowProfileActivity.this, "Thành công!", Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                     dialog.dismiss();
                 } else {
-                    Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                 }
             }
@@ -720,12 +747,16 @@ public class ShowProfileActivity extends AppCompatActivity {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if(response.isSuccessful()) {
                         Log.e("onResponse", response.message() + "__" + response.toString());
-                        Toast.makeText(ShowProfileActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
+                        Toast t = Toast.makeText(ShowProfileActivity.this, "Thành công!", Toast.LENGTH_LONG);
+                        t.getView().setBackgroundColor(R.drawable.toast);
+                        t.show();
                         loadDialog.dismiss();
                         mActivity.finish();
                     }
                     else{
-                        Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                        Toast t = Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG);
+                        t.getView().setBackgroundColor(R.drawable.toast);
+                        t.show();
                         loadDialog.dismiss();
                         return;
                     }

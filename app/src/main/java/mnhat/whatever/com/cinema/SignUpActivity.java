@@ -1,5 +1,6 @@
 package mnhat.whatever.com.cinema;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,8 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,7 @@ public class SignUpActivity extends AppCompatActivity {
     APIService mAPIService;
     Animation up, down, left, right;
     String e,p;
+    ScrollView screen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
         icPass1 = (IconTextView) findViewById(R.id.tv_lock_icon1);
         icPass2 = (IconTextView) findViewById(R.id.tv_lock_icon2);
         tSignUp = (TextView) findViewById(R.id.tv_sign_up);
+        screen = (ScrollView) findViewById(R.id.screen);
 
         up = AnimationUtils.loadAnimation(SignUpActivity.this,R.anim.up);
         down = AnimationUtils.loadAnimation(SignUpActivity.this,R.anim.down);
@@ -65,6 +70,14 @@ public class SignUpActivity extends AppCompatActivity {
         btn_signIn.setAnimation(up);
 
         mAPIService = APIUtils.getAPIService();
+
+        screen.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                hideKeyboard(view);
+                return true;
+            }
+        });
 
         btn_signIn.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -106,32 +119,44 @@ public class SignUpActivity extends AppCompatActivity {
                         int validate = util.checkSignUpValidate(edt_userName,edt_email,edt_password,edt_rePassword);
                         switch (validate) {
                             case 1:{
-                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Username",Toast.LENGTH_LONG).show();
+                                Toast t = Toast.makeText(SignUpActivity.this,"Vui lòng nhập Username",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
 
                             case 2:{
-                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG).show();
+                                Toast t =Toast.makeText(SignUpActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
 
                             case 21:{
-                                Toast.makeText(SignUpActivity.this,"Email không hợp lệ. Vui lòng nhập lại",Toast.LENGTH_LONG).show();
+                                Toast t = Toast.makeText(SignUpActivity.this,"Email không hợp lệ. Vui lòng nhập lại",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
 
                             case 3:{
-                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG).show();
+                                Toast t =Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
 
                             case 4:{
-                                Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password lần hai",Toast.LENGTH_LONG).show();
+                                Toast t = Toast.makeText(SignUpActivity.this,"Vui lòng nhập Password lần hai",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
 
                             case 34:{
-                                Toast.makeText(SignUpActivity.this,"2 Password không giống nhau. Vui lòng nhập lại",Toast.LENGTH_LONG).show();
+                                Toast t = Toast.makeText(SignUpActivity.this,"2 Password không giống nhau. Vui lòng nhập lại",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
                             case 0:{
@@ -165,14 +190,18 @@ public class SignUpActivity extends AppCompatActivity {
             public void onResponse(Call<SignUpData> call, Response<SignUpData> response) {
                 if (response.isSuccessful()){
                     Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(SignUpActivity.this," Đăng ký thành công!",Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(SignUpActivity.this," Đăng ký thành công!",Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                     goSignIn(email,password);
 
                 }
                 else {
                     Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(SignUpActivity.this,"Tài khoản đã tồn tại. Vui lòng kiểm tra lại",Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(SignUpActivity.this,"Tài khoản đã tồn tại. Vui lòng kiểm tra lại",Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
 
                 }
@@ -226,5 +255,10 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

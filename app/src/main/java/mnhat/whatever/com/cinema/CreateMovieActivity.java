@@ -214,20 +214,26 @@ public class CreateMovieActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:{
                         newPic = ((BitmapDrawable)picture.getDrawable()).getBitmap();
                         if (oriPic.sameAs(newPic)){
-                            Toast.makeText(CreateMovieActivity.this,"Hãy chọn ảnh cho phim",Toast.LENGTH_SHORT).show();
+                            Toast t = Toast.makeText(CreateMovieActivity.this,"Hãy chọn ảnh cho phim",Toast.LENGTH_SHORT);
+                            t.getView().setBackgroundColor(R.drawable.toast);
+                            t.show();
                             view.getBackground().clearColorFilter();
                             view.invalidate();
                             break;
                         }
 
                         if (util.checkFilmValidate(filmName,date) == 1){
-                            Toast.makeText(CreateMovieActivity.this,"Hãy nhập tên phim",Toast.LENGTH_SHORT).show();
+                            Toast t = Toast.makeText(CreateMovieActivity.this,"Hãy nhập tên phim",Toast.LENGTH_SHORT);
+                            t.getView().setBackgroundColor(R.drawable.toast);
+                            t.show();
                             view.getBackground().clearColorFilter();
                             view.invalidate();
                             break;
                         }
                         if (util.checkFilmValidate(filmName,date) == 2){
-                            Toast.makeText(CreateMovieActivity.this,"Nhập thời gian đúng định dạng.",Toast.LENGTH_SHORT).show();
+                            Toast t = Toast.makeText(CreateMovieActivity.this,"Nhập thời gian đúng định dạng.",Toast.LENGTH_SHORT);
+                            t.getView().setBackgroundColor(R.drawable.toast);
+                            t.show();
                             view.getBackground().clearColorFilter();
                             view.invalidate();
                             break;
@@ -318,7 +324,9 @@ public class CreateMovieActivity extends AppCompatActivity {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(CreateMovieActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast t = Toast.makeText(CreateMovieActivity.this, "Thất bại!", Toast.LENGTH_SHORT);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                 }
             }
 
@@ -326,7 +334,9 @@ public class CreateMovieActivity extends AppCompatActivity {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             saveImage(thumbnail,requestCode);
             picture.setImageBitmap(thumbnail);
-            Toast.makeText(CreateMovieActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            Toast t = Toast.makeText(CreateMovieActivity.this, "Ảnh đã được lưu!", Toast.LENGTH_SHORT);
+            t.getView().setBackgroundColor(R.drawable.toast);
+            t.show();
         }
     }
     public String saveImage(Bitmap myBitmap, int requestCode) {
@@ -519,12 +529,16 @@ public class CreateMovieActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()) {
                     Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(CreateMovieActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(CreateMovieActivity.this, "Thành công!", Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                     mActivity.finish();
                 }
                 else{
-                    Toast.makeText(CreateMovieActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(CreateMovieActivity.this, "Có lỗi xảy ra. Vui lòng thử lại sau", Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     loadDialog.dismiss();
                     return;
                 }

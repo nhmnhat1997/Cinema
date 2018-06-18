@@ -103,15 +103,21 @@ public class SignInActivity extends AppCompatActivity {
                         int valid = util.checkSignInValidate(email,password);
                         switch (valid){
                             case 1:{
-                                Toast.makeText(SignInActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG).show();
+                                Toast t = Toast.makeText(SignInActivity.this,"Vui lòng nhập Email",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
                             case 2:{
-                                Toast.makeText(SignInActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG).show();
+                                Toast t =Toast.makeText(SignInActivity.this,"Vui lòng nhập Password",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
                             case 11:{
-                                Toast.makeText(SignInActivity.this,"Email không đúng định dạng. Vui lòng kiểm tra lại",Toast.LENGTH_LONG).show();
+                                Toast t =Toast.makeText(SignInActivity.this,"Email không đúng định dạng. Vui lòng kiểm tra lại",Toast.LENGTH_LONG);
+                                t.getView().setBackgroundColor(R.drawable.toast);
+                                t.show();
                                 break;
                             }
                             case 0:{
@@ -177,7 +183,9 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                 if (response.isSuccessful()){
                     Log.e("onResponse", response.message() + "__" + response.toString());
-                    Toast.makeText(SignInActivity.this," Đăng nhập thành công!",Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(SignInActivity.this," Đăng nhập thành công!",Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
 
                     Boolean isLogin = true;
                     String token = response.body().getToken();
@@ -202,7 +210,9 @@ public class SignInActivity extends AppCompatActivity {
                 else{
                     Log.e("onResponse", response.message() + "__" + response.toString());
                     loadDialog.dismiss();
-                    Toast.makeText(SignInActivity.this,"Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại.",Toast.LENGTH_LONG).show();
+                    Toast t = Toast.makeText(SignInActivity.this,"Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại.",Toast.LENGTH_LONG);
+                    t.getView().setBackgroundColor(R.drawable.toast);
+                    t.show();
                     return;
                 }
             }
