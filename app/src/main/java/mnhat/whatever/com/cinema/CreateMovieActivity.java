@@ -22,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +31,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -62,15 +65,16 @@ public class CreateMovieActivity extends AppCompatActivity {
     EditText filmName, date, description;
     Spinner gerne;
     Button choosePicture, post;
+    TextView tFilmName,tGenre,tDate,tDescription;
     ImageView picture;
     Bitmap oriPic, newPic;
     String userChoosenTask;
+    Animation up, down, left, right;
 
     public static final int CAMERA = 1;
     public static final int GALLERY = 0;
 
     Activity mActivity;
-
 
     Calendar myCalendar = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener releaseDate = new DatePickerDialog.OnDateSetListener() {
@@ -98,6 +102,28 @@ public class CreateMovieActivity extends AppCompatActivity {
         choosePicture = (Button) findViewById(R.id.btnChoosePicture);
         post = (Button) findViewById(R.id.post);
         picture = (ImageView) findViewById(R.id.filmPicture);
+        tFilmName = (TextView) findViewById(R.id.tvwFilmName);
+        tGenre = (TextView) findViewById(R.id.tvwGerne);
+        tDate = (TextView) findViewById(R.id.tvwReleaseDate);
+        tDescription = (TextView) findViewById(R.id.tvwDescription);
+
+        up = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.up);
+        down = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.down);
+        left = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.left);
+        right = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.right);
+
+        picture.setAnimation(down);
+        choosePicture.setAnimation(down);
+        post.setAnimation(up);
+        tFilmName.setAnimation(left);
+        tGenre.setAnimation(left);
+        tDate.setAnimation(left);
+        tDescription.setAnimation(left);
+        filmName.setAnimation(right);
+        gerne.setAnimation(right);
+        date.setAnimation(right);
+        description.setAnimation(right);
+
 
         oriPic = ((BitmapDrawable) picture.getDrawable()).getBitmap();
 
