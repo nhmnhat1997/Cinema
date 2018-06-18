@@ -2,6 +2,7 @@ package mnhat.whatever.com.cinema;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -12,7 +13,14 @@ import android.view.View;
 import android.widget.Toast;
 import android.content.SharedPreferences;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -27,6 +35,7 @@ public class ListFilmActivity extends AppCompatActivity {
     String token;
 
     FloatingActionButton addFilm, userProfile;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +53,7 @@ public class ListFilmActivity extends AppCompatActivity {
         addFilm = (FloatingActionButton) findViewById(R.id.fab_add_film);
         userProfile = (FloatingActionButton) findViewById(R.id.fab_user);
         mRecyclerView = (RecyclerView) findViewById(R.id.rvListFilm);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mService = APIUtils.getAPIService();
         mAdapter = new FilmDataAdapter(this, new ArrayList<FilmData.Movie>(0), new FilmDataAdapter.PostItemListener() {
 
@@ -78,6 +88,13 @@ public class ListFilmActivity extends AppCompatActivity {
                 }
             }
         });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadList();
+            }
+        });
     }
 
     @Override
@@ -88,6 +105,7 @@ public class ListFilmActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadList();
     }
 
     public void loadList(){
@@ -95,9 +113,10 @@ public class ListFilmActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<FilmData> call, Response<FilmData> response) {
                 if (response.isSuccessful()){
-                    mAdapter.updateData(response.body().getMovies());
-
-
+                    List<FilmData.Movie> temp = response.body().getMovies();
+                    Collections.reverse(temp);
+                    mAdapter.updateData(temp);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
 

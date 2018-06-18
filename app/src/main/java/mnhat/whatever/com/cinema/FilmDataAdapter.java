@@ -94,6 +94,13 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
         notifyDataSetChanged();
     }
 
+    public void clear(List<FilmData.Movie> items) {
+        items.clear();
+        notifyDataSetChanged();
+    }
+
+
+
     private FilmData.Movie getItem(int adapterPosition) {
         return mItems.get(adapterPosition);
     }
