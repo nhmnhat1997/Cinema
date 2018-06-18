@@ -28,6 +28,7 @@ public class SignInActivity extends AppCompatActivity {
     Animation up, down, left, right;
     Utility util = new Utility();
     APIService mAPIService;
+    String e,p;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class SignInActivity extends AppCompatActivity {
             finish();
         }
 
+
         email = (EditText) findViewById(R.id.et_Email);
         password = (EditText) findViewById(R.id.et_Password);
         signIn = (Button) findViewById(R.id.btn_SignIn);
@@ -49,6 +51,13 @@ public class SignInActivity extends AppCompatActivity {
         tOr = (TextView) findViewById(R.id.tv_or);
         tEmail = (IconTextView) findViewById(R.id.tv_mail_icon);
         tPassword = (IconTextView) findViewById(R.id.tv_lock_icon1);
+
+        SharedPreferences temp = getSharedPreferences("signInLog",MODE_PRIVATE);
+        email.setText(temp.getString("email",""));
+        email.setSelection(email.getText().toString().length());
+        password.setText(temp.getString("password",""));
+        password.setSelection(password.getText().toString().length());
+
 
         up = AnimationUtils.loadAnimation(SignInActivity.this,R.anim.up);
         down = AnimationUtils.loadAnimation(SignInActivity.this,R.anim.down);
@@ -155,13 +164,18 @@ public class SignInActivity extends AppCompatActivity {
 
                     Boolean isLogin = true;
                     String token = response.body().getToken();
+                    e = email.getText().toString();
+                    p = password.getText().toString();
                     SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
                     SharedPreferences.Editor editor = pre.edit();
                     editor.putString("token",token);
                     editor.putBoolean("isLogin",isLogin);
-                    editor.putString("email",email.getText().toString());
-                    editor.putString("password",password.getText().toString());
                     editor.commit();
+                    SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
+                    SharedPreferences.Editor logIn = pre_signIn.edit();
+                    logIn.putString("email",e);
+                    logIn.putString("password",p);
+                    logIn.commit();
                     Intent intent = new Intent(SignInActivity.this, ListFilmActivity.class);
                     startActivity(intent);
                     finish();
