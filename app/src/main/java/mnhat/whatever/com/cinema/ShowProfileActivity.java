@@ -47,8 +47,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,9 +69,9 @@ public class ShowProfileActivity extends AppCompatActivity {
     public static final int GALLERY = 0;
 
 
-    TextView userName,email,phoneNum;
-    LinearLayout editPhoneNum,editUsername,basicInfo,mail,phone,btn;
-    Button changePassword,signOut;
+    TextView userName, email, phoneNum;
+    LinearLayout editPhoneNum, editUsername, basicInfo, mail, phone, btn;
+    Button changePassword, signOut;
     CircleImageView avatar;
     Animation up, down, left, right;
     Activity mActivity;
@@ -98,10 +103,10 @@ public class ShowProfileActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvUserListFilm);
 
-        up = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.up);
-        down = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.down);
-        left = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.left);
-        right = AnimationUtils.loadAnimation(ShowProfileActivity.this,R.anim.right);
+        up = AnimationUtils.loadAnimation(ShowProfileActivity.this, R.anim.up);
+        down = AnimationUtils.loadAnimation(ShowProfileActivity.this, R.anim.down);
+        left = AnimationUtils.loadAnimation(ShowProfileActivity.this, R.anim.left);
+        right = AnimationUtils.loadAnimation(ShowProfileActivity.this, R.anim.right);
 
         avatar.setAnimation(down);
         basicInfo.setAnimation(down);
@@ -110,7 +115,7 @@ public class ShowProfileActivity extends AppCompatActivity {
         mail.setAnimation(left);
         basicInfo.setAnimation(down);
 
-        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+        SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
 
         mService = APIUtils.getAPIService();
         mAdapter = new UserFilmDataAdapter(this, new ArrayList<FilmData.Movie>(0), new UserFilmDataAdapter.PostItemListener() {
@@ -121,7 +126,7 @@ public class ShowProfileActivity extends AppCompatActivity {
             }
         });
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ShowProfileActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ShowProfileActivity.this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
@@ -141,9 +146,9 @@ public class ShowProfileActivity extends AppCompatActivity {
         editUsername.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_username,null);
+                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_username, null);
                 final EditText edtU = v.findViewById(R.id.edt_username);
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this, R.style.AlertDialogCustom))
                         .setView(v)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -156,7 +161,7 @@ public class ShowProfileActivity extends AppCompatActivity {
 
                             }
                         }).setCancelable(false);
-                AlertDialog dialog = builder.create();
+                final AlertDialog dialog = builder.create();
 
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
@@ -168,6 +173,18 @@ public class ShowProfileActivity extends AppCompatActivity {
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
+                        Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        b.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (edtU.getText().toString().equals("")){
+                                    Toast.makeText(mActivity, "Vui lòng nhập username mới.", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                updateProfile(edtU,null,dialog);
+                                userName.setText(edtU.getText().toString());
+                            }
+                        });
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.showSoftInput(edtU, InputMethodManager.SHOW_IMPLICIT);
                     }
@@ -179,22 +196,18 @@ public class ShowProfileActivity extends AppCompatActivity {
         editPhoneNum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_phone,null);
+                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_phone, null);
                 final EditText edtPhone = v.findViewById(R.id.edt_phoneNum);
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this, R.style.AlertDialogCustom))
                         .setView(v)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("OK", null)
+                        .setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
                             }
                         }).setCancelable(false);
-                AlertDialog dialog = builder.create();
+                final AlertDialog dialog = builder.create();
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
@@ -205,6 +218,18 @@ public class ShowProfileActivity extends AppCompatActivity {
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
+                        Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        b.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (edtPhone.getText().toString().equals("")){
+                                    Toast.makeText(mActivity, "Vui lòng nhập số điện thoại mới.", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                updateProfile(edtPhone,null,dialog);
+                                phoneNum.setText(edtPhone.getText().toString());
+                            }
+                        });
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.showSoftInput(edtPhone, InputMethodManager.SHOW_IMPLICIT);
                     }
@@ -216,11 +241,11 @@ public class ShowProfileActivity extends AppCompatActivity {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_password,null);
+                View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_password, null);
                 final EditText edtCurrPass = v.findViewById(R.id.edt_currentPass);
                 final EditText edtNewPass1 = v.findViewById(R.id.edt_newPass);
                 final EditText edtNewPass2 = v.findViewById(R.id.edt_newPass2);
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this, R.style.AlertDialogCustom))
                         .setView(v)
                         .setPositiveButton("OK", null)
                         .setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
@@ -242,7 +267,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                         b.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
+                                SharedPreferences pre_signIn = getSharedPreferences("signInLog", MODE_PRIVATE);
                                 if (edtCurrPass.getText().toString().equals("")) {
                                     Toast.makeText(mActivity, "Vui lòng nhập password cũ.", Toast.LENGTH_LONG).show();
                                     return;
@@ -253,7 +278,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                                     Toast.makeText(mActivity, "Vui lòng lại password mới.", Toast.LENGTH_LONG).show();
                                     return;
                                 } else if (!edtCurrPass.getText().toString().equals("") && !edtNewPass1.getText().toString().equals("") && !edtNewPass2.getText().toString().equals("")) {
-                                    if (!edtCurrPass.getText().toString().equals(pre_signIn.getString("password",""))){
+                                    if (!edtCurrPass.getText().toString().equals(pre_signIn.getString("password", ""))) {
                                         Toast.makeText(mActivity, "Password cũ không chính xác.", Toast.LENGTH_LONG).show();
                                         return;
                                     }
@@ -281,12 +306,12 @@ public class ShowProfileActivity extends AppCompatActivity {
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this, R.style.AlertDialogCustom))
                         .setMessage("Bạn có chắc chắn muốn đăng xuất ?")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+                                SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = pre.edit();
                                 editor.clear();
                                 editor.commit();
@@ -319,7 +344,7 @@ public class ShowProfileActivity extends AppCompatActivity {
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
                 "Select photo from gallery",
-                "Capture photo from camera" };
+                "Capture photo from camera"};
         pictureDialog.setItems(pictureDialogItems,
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -337,11 +362,12 @@ public class ShowProfileActivity extends AppCompatActivity {
         pictureDialog.show();
 
     }
+
     public void choosePhotoFromGallary() {
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},GALLERY);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY);
             return;
         }
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
@@ -349,10 +375,11 @@ public class ShowProfileActivity extends AppCompatActivity {
 
         startActivityForResult(galleryIntent, GALLERY);
     }
+
     private void takePhotoFromCamera() {
         if (checkSelfPermission(Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},CAMERA);
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA);
             return;
         }
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -371,7 +398,8 @@ public class ShowProfileActivity extends AppCompatActivity {
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     avatar.setImageBitmap(bitmap);
-                    mImageFile = new File(getPath(this,contentURI));
+                    mImageFile = new File(getPath(this, contentURI));
+                    updateAvatar(userName,phoneNum);
                     //saveImage(bitmap,requestCode);
 
                 } catch (IOException e) {
@@ -382,11 +410,13 @@ public class ShowProfileActivity extends AppCompatActivity {
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            saveImage(thumbnail,requestCode);
+            saveImage(thumbnail, requestCode);
             avatar.setImageBitmap(thumbnail);
+            updateAvatar(userName,phoneNum);
             Toast.makeText(ShowProfileActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
+
     public String saveImage(Bitmap myBitmap, int requestCode) {
         if (requestCode == CAMERA) {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -461,7 +491,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -489,9 +519,9 @@ public class ShowProfileActivity extends AppCompatActivity {
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
@@ -551,15 +581,14 @@ public class ShowProfileActivity extends AppCompatActivity {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public void loadList(){
+    public void loadList() {
         mService.getFilmData().enqueue(new Callback<FilmData>() {
             @Override
             public void onResponse(Call<FilmData> call, Response<FilmData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     mAdapter.updateData(response.body().getMovies());
-                }
-                else{
-                    Toast.makeText(ShowProfileActivity.this,response.message(),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -571,24 +600,23 @@ public class ShowProfileActivity extends AppCompatActivity {
         });
     }
 
-    public void changePass(EditText oldPass, EditText newPass, final AlertDialog dialog){
-        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
-        String token = pre.getString("token","");
-        final ProgressDialog loadDialog = new ProgressDialog(ShowProfileActivity.this,R.style.AlertDialogCustom);
+    public void changePass(EditText oldPass, EditText newPass, final AlertDialog dialog) {
+        SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
+        String token = pre.getString("token", "");
+        final ProgressDialog loadDialog = new ProgressDialog(ShowProfileActivity.this, R.style.AlertDialogCustom);
         loadDialog.setMessage("Loading");
         loadDialog.show();
-        mService.changePass(token,oldPass.getText().toString(),newPass.getText().toString()).enqueue(new Callback<Password>() {
+        mService.changePass(token, oldPass.getText().toString(), newPass.getText().toString()).enqueue(new Callback<Password>() {
             @Override
             public void onResponse(Call<Password> call, Response<Password> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     //SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
                     //SharedPreferences.Editor logIn = pre_signIn.edit();
-                    Toast.makeText(mActivity,"Đổi mật khẩu thành công",Toast.LENGTH_LONG).show();
+                    Toast.makeText(mActivity, "Đổi mật khẩu thành công", Toast.LENGTH_LONG).show();
                     loadDialog.dismiss();
                     dialog.dismiss();
-                }
-                else{
-                    Toast.makeText(mActivity,response.message(),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mActivity, response.message(), Toast.LENGTH_LONG).show();
                     loadDialog.dismiss();
                     dialog.dismiss();
                 }
@@ -601,22 +629,21 @@ public class ShowProfileActivity extends AppCompatActivity {
         });
     }
 
-    public void loadProfile(){
-        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
-        String token = pre.getString("token","");
+    public void loadProfile() {
+        SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
+        String token = pre.getString("token", "");
         mService.getProfileInfo(token).enqueue(new Callback<UserProfileData>() {
             @Override
             public void onResponse(Call<UserProfileData> call, Response<UserProfileData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.placeholder(R.drawable.user);
                     userName.setText(response.body().getUser().getUsername());
                     email.setText(response.body().getUser().getEmail());
                     phoneNum.setText(response.body().getUser().getPhone());
                     Glide.with(mActivity).setDefaultRequestOptions(requestOptions).load(domain + response.body().getUser().getAvatar()).into(avatar);
-                }
-                else {
-                    Toast.makeText(ShowProfileActivity.this,response.message(),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -627,5 +654,92 @@ public class ShowProfileActivity extends AppCompatActivity {
         });
     }
 
-    //x-access-token
+    public void updateProfile(EditText phoneNum, EditText userName, final AlertDialog dialog) {
+        final ProgressDialog loadDialog = new ProgressDialog(ShowProfileActivity.this, R.style.AlertDialogCustom);
+        loadDialog.setMessage("Loading");
+        loadDialog.show();
+        HashMap<String, RequestBody> map = new HashMap<>();
+        if (userName != null) {
+            RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName.getText().toString());
+            map.put("username", username);
+        } else {
+            RequestBody username = RequestBody.create(MediaType.parse("text/plain"), "");
+            map.put("username", username);
+        }
+
+        if (phoneNum != null) {
+            RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), phoneNum.getText().toString());
+            map.put("phone", phone);
+        } else {
+            RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), "");
+            map.put("phone", phone);
+        }
+
+
+        SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
+        String token = pre.getString("token", "");
+        mService.updateProfile(token, map).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.e("onResponse", response.message() + "__" + response.toString());
+                    Toast.makeText(ShowProfileActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+        public void updateAvatar(TextView userName, TextView phoneNum){
+            final ProgressDialog loadDialog = new ProgressDialog(ShowProfileActivity.this,R.style.AlertDialogCustom);
+            loadDialog.setMessage("Loading");
+            loadDialog.show();
+            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), mImageFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("cover", mImageFile.getName(), reqFile);
+
+            RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName.getText().toString());
+            RequestBody phone = RequestBody.create(MediaType.parse("text/plain"),phoneNum.getText().toString());
+
+
+            HashMap<String, RequestBody> map = new HashMap<>();
+            map.put("username", username);
+            map.put("phone", phone);
+            SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+            String token = pre.getString("token","");
+            mService.uploadFileWithPartMap(token ,map, body).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.isSuccessful()) {
+                        Log.e("onResponse", response.message() + "__" + response.toString());
+                        Toast.makeText(ShowProfileActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
+                        loadDialog.dismiss();
+                        mActivity.finish();
+                    }
+                    else{
+                        Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                        loadDialog.dismiss();
+                        return;
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+
+
+
+
+        //x-access-token
+    }
 }
