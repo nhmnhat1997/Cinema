@@ -12,22 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient(String baseUrl, final String token) {
+    public static Retrofit getClient(String baseUrl) {
         if (retrofit==null) {
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            httpClient.addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request original = chain.request();
-                    Request request = original.newBuilder()
-                            .header("x-access-token",token)
-                            .header("Content-Type","application/json")
-                            .method(original.method(),original.body())
-                            .build();
-                    return chain.proceed(request);
-                }
-            });
-
             retrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())

@@ -10,6 +10,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -19,6 +20,7 @@ public interface APIService {
     @Multipart
     @POST("/api/v1/movies/")
     Call<ResponseBody> uploadFileWithPartMap(
+            @Header("x-access-token") String token,
             @PartMap() Map<String, RequestBody> partMap,
             @Part MultipartBody.Part file);
 
@@ -35,6 +37,6 @@ public interface APIService {
                                 @Field("password") String password);
 
     @GET("/api/v1/users/")
-    Call<ProfileInfo> getProfileInfo();
+    Call<ProfileInfo> getProfileInfo(@Header("x-access-token") String token);
 
 }

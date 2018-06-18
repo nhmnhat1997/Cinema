@@ -30,6 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -99,6 +100,8 @@ public class ShowProfileActivity extends AppCompatActivity {
         mail.setAnimation(left);
         basicInfo.setAnimation(down);
 
+        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+
         mService = APIUtils.getAPIService();
         mAdapter = new UserFilmDataAdapter(this, new ArrayList<FilmData.Movie>(0), new UserFilmDataAdapter.PostItemListener() {
 
@@ -128,6 +131,7 @@ public class ShowProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_username,null);
+                final EditText edtU = v.findViewById(R.id.edt_username);
                 AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
                         .setView(v)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -142,9 +146,19 @@ public class ShowProfileActivity extends AppCompatActivity {
                             }
                         }).setCancelable(false);
                 AlertDialog dialog = builder.create();
+
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
+                    }
+                });
+                edtU.setText("Name");
+                edtU.setSelection(edtU.getText().toString().length());
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(edtU, InputMethodManager.SHOW_IMPLICIT);
                     }
                 });
                 dialog.show();
@@ -155,6 +169,7 @@ public class ShowProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_phone,null);
+                final EditText edtPhone = v.findViewById(R.id.edt_phoneNum);
                 AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
                         .setView(v)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -174,6 +189,15 @@ public class ShowProfileActivity extends AppCompatActivity {
                     public void onDismiss(DialogInterface dialogInterface) {
                     }
                 });
+                edtPhone.setText("0123456789");
+                edtPhone.setSelection(edtPhone.getText().toString().length());
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(edtPhone, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
                 dialog.show();
             }
         });
@@ -182,6 +206,9 @@ public class ShowProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 View v = LayoutInflater.from(ShowProfileActivity.this).inflate(R.layout.dialog_change_password,null);
+                final EditText edtCurrPass = v.findViewById(R.id.edt_currentPass);
+                final EditText edtNewPass1 = v.findViewById(R.id.edt_newPass);
+                final EditText edtNewPass2 = v.findViewById(R.id.edt_newPass2);
                 AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(ShowProfileActivity.this,R.style.AlertDialogCustom))
                         .setView(v)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -199,6 +226,13 @@ public class ShowProfileActivity extends AppCompatActivity {
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
+                    }
+                });
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(edtCurrPass, InputMethodManager.SHOW_IMPLICIT);
                     }
                 });
                 dialog.show();

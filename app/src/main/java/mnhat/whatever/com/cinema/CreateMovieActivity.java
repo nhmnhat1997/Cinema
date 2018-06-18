@@ -9,6 +9,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -109,6 +110,10 @@ public class CreateMovieActivity extends AppCompatActivity {
         tDate = (TextView) findViewById(R.id.tvwReleaseDate);
         tDescription = (TextView) findViewById(R.id.tvwDescription);
 
+        up = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.up);
+        down = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.down);
+        left = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.left);
+        right = AnimationUtils.loadAnimation(CreateMovieActivity.this,R.anim.right);
 
         picture.setAnimation(down);
         choosePicture.setAnimation(down);
@@ -506,9 +511,10 @@ public class CreateMovieActivity extends AppCompatActivity {
         map.put("genre", genre);
         map.put("release", release);
         map.put("description", descript);
-
+        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+        String token = pre.getString("token","");
         mAPIService = APIUtils.getAPIService();
-        mAPIService.uploadFileWithPartMap( map, body).enqueue(new Callback<ResponseBody>() {
+        mAPIService.uploadFileWithPartMap(token ,map, body).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()) {
