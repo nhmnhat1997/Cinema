@@ -106,6 +106,7 @@ public class ListFilmActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadList();
+        mRecyclerView.scrollToPosition(0);
     }
 
     public void loadList(){

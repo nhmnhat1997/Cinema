@@ -166,7 +166,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/border_signup"
                     android:ems="10"
-                    android:hint="Re-enter Password"
+                    android:hint="Nhập lại Password"
                     android:inputType="textPassword"
                     android:textColor="@android:color/black"
                     android:textCursorDrawable="@drawable/cursor"
