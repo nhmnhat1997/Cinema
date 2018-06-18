@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -78,6 +79,7 @@ public class ShowProfileActivity extends AppCompatActivity {
     CircleImageView avatar;
     Animation up, down, left, right;
     Activity mActivity;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     String domain = "https://nam-cinema.herokuapp.com/";
 
@@ -349,7 +351,13 @@ public class ShowProfileActivity extends AppCompatActivity {
 
             }
         });
-
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadProfile();
+                loadList();
+            }
+        });
     }
 
     private void selectImage() {
@@ -606,6 +614,8 @@ public class ShowProfileActivity extends AppCompatActivity {
                     List<FilmData.Movie> temp = response.body().getMovies();
                     Collections.reverse(temp);
                     mAdapter.updateData(temp);
+                    swipeRefreshLayout.setRefreshing(false);
+
                 } else {
                     Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
                 }
