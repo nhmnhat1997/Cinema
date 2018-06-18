@@ -61,7 +61,8 @@
                     android:hint="Username"
                     android:inputType="textPersonName"
                     android:textColor="@android:color/black"
-                    android:textCursorDrawable="@drawable/cursor" />
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:theme="@style/EditTextTheme" />
 
             </LinearLayout>
 
@@ -98,7 +99,8 @@
                     android:hint="Email"
                     android:inputType="textPersonName"
                     android:textColor="@android:color/black"
-                    android:textCursorDrawable="@drawable/cursor" />
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:theme="@style/EditTextTheme" />
 
             </LinearLayout>
 
@@ -132,7 +134,8 @@
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:textColor="@android:color/black"
-                    android:textCursorDrawable="@drawable/cursor" />
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:theme="@style/EditTextTheme" />
 
             </LinearLayout>
 
@@ -166,7 +169,8 @@
                     android:hint="Re-enter Password"
                     android:inputType="textPassword"
                     android:textColor="@android:color/black"
-                    android:textCursorDrawable="@drawable/cursor" />
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:theme="@style/EditTextTheme" />
 
             </LinearLayout>
 

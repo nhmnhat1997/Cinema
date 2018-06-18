@@ -59,7 +59,8 @@
                 android:cursorVisible="true"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:textCursorDrawable="@drawable/cursor" />
+                android:textCursorDrawable="@drawable/cursor"
+                android:theme="@style/EditTextTheme" />
 
             <TextView
                 android:id="@+id/tvwGerne"
@@ -97,7 +98,8 @@
                 android:cursorVisible="false"
                 android:ems="10"
                 android:inputType="date"
-                android:maxLength="10" />
+                android:maxLength="10"
+                android:theme="@style/EditTextTheme" />
 
             <TextView
                 android:id="@+id/tvwDescription"
@@ -120,7 +122,8 @@
                 android:gravity="left|top"
                 android:inputType="textPersonName"
                 android:minHeight="65dp"
-                android:textCursorDrawable="@drawable/cursor" />
+                android:textCursorDrawable="@drawable/cursor"
+                android:theme="@style/EditTextTheme" />
 
             <Button
                 android:id="@+id/post"

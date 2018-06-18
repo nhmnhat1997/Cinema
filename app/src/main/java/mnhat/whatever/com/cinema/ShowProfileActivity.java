@@ -181,7 +181,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                                     Toast.makeText(mActivity, "Vui lòng nhập username mới.", Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                updateProfile(edtU,null,dialog);
+                                updateProfile(null,edtU,dialog);
                                 userName.setText(edtU.getText().toString());
                             }
                         });

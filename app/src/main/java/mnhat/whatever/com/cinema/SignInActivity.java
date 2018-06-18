@@ -189,7 +189,7 @@ public class SignInActivity extends AppCompatActivity {
                 else{
                     Log.e("onResponse", response.message() + "__" + response.toString());
                     loadDialog.dismiss();
-                    Toast.makeText(SignInActivity.this,response.message(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignInActivity.this,"Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại.",Toast.LENGTH_LONG).show();
                     return;
                 }
             }
