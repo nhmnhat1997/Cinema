@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -143,6 +144,29 @@ public class CreateMovieActivity extends AppCompatActivity {
             }
         });
 
+        choosePicture.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:{
+                        selectImage();
+                    }
+                    // Your action here on button click
+                    case MotionEvent.ACTION_CANCEL: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
+
         String[] bTypeSpinner = new String[] {
                 "Hành động", "Tâm lý", "Kinh dị", "Khoa học viễn tưởng", "Hài"
         };
@@ -171,30 +195,48 @@ public class CreateMovieActivity extends AppCompatActivity {
             }
         });
 
-        post.setOnClickListener(new View.OnClickListener() {
+
+        post.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                newPic = ((BitmapDrawable)picture.getDrawable()).getBitmap();
-                if (oriPic.sameAs(newPic)){
-                    Toast.makeText(CreateMovieActivity.this,"Hãy chọn ảnh cho phim",Toast.LENGTH_SHORT).show();
-                    return;
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:{
+                        newPic = ((BitmapDrawable)picture.getDrawable()).getBitmap();
+                        if (oriPic.sameAs(newPic)){
+                            Toast.makeText(CreateMovieActivity.this,"Hãy chọn ảnh cho phim",Toast.LENGTH_SHORT).show();
+                            view.getBackground().clearColorFilter();
+                            view.invalidate();
+                            break;
+                        }
+
+                        if (util.checkFilmValidate(filmName,date) == 1){
+                            Toast.makeText(CreateMovieActivity.this,"Hãy nhập tên phim",Toast.LENGTH_SHORT).show();
+                            view.getBackground().clearColorFilter();
+                            view.invalidate();
+                            break;
+                        }
+                        if (util.checkFilmValidate(filmName,date) == 2){
+                            Toast.makeText(CreateMovieActivity.this,"Nhập thời gian đúng định dạng.",Toast.LENGTH_SHORT).show();
+                            view.getBackground().clearColorFilter();
+                            view.invalidate();
+                            break;
+                        }
+                        if (util.checkFilmValidate(filmName,date) == 0){
+                            createMovie();
+                        }
+                    }
+                    case MotionEvent.ACTION_CANCEL: {
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
                 }
-
-                if (util.checkFilmValidate(filmName,date) == 1){
-                    Toast.makeText(CreateMovieActivity.this,"Hãy nhập tên phim",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (util.checkFilmValidate(filmName,date) == 2){
-                    Toast.makeText(CreateMovieActivity.this,"Nhập thời gian đúng định dạng.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (util.checkFilmValidate(filmName,date) == 0){
-                    createMovie();
-                }
-
-
-
-
+                return true;
             }
         });
 
