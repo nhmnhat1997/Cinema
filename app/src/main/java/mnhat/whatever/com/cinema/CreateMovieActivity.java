@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -488,6 +489,9 @@ public class CreateMovieActivity extends AppCompatActivity {
     }
 
     public void createMovie(){
+        final ProgressDialog loadDialog = new ProgressDialog(CreateMovieActivity.this,R.style.AlertDialogCustom);
+        loadDialog.setMessage("Loading");
+        loadDialog.show();
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), mImageFile);
         MultipartBody.Part body = MultipartBody.Part.createFormData("cover", mImageFile.getName(), reqFile);
 
@@ -510,10 +514,13 @@ public class CreateMovieActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     Log.e("onResponse", response.message() + "__" + response.toString());
                     Toast.makeText(CreateMovieActivity.this, "Thành công!", Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
                     mActivity.finish();
                 }
                 else{
                     Toast.makeText(CreateMovieActivity.this, response.message(), Toast.LENGTH_LONG).show();
+                    loadDialog.dismiss();
+                    return;
                 }
             }
 
