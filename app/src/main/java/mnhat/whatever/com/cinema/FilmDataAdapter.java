@@ -1,6 +1,7 @@
 package mnhat.whatever.com.cinema;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v4.content.res.FontResourcesParserCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +51,12 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
+            Gson gson = new Gson();
+            Context ct = view.getContext();
             FilmData.Movie item = getItem(getAdapterPosition());
-
+            Intent intent = new Intent(mContext,FilmDetailActivity.class);
+            intent.putExtra("data",gson.toJson(item));
+            ct.startActivity(intent);
             notifyDataSetChanged();
         }
     }

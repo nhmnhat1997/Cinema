@@ -105,7 +105,7 @@ public class ShowProfileActivity extends AppCompatActivity {
         signOut = (Button) findViewById(R.id.btn_signOut);
 
         avatar = (CircleImageView) findViewById(R.id.imgv_avatar);
-
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mRecyclerView = (RecyclerView) findViewById(R.id.rvUserListFilm);
 
         up = AnimationUtils.loadAnimation(ShowProfileActivity.this, R.anim.up);

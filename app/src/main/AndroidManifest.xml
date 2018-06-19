@@ -16,31 +16,26 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".CreateMovieActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-
-        </activity>
-
-        <activity android:name=".ListFilmActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-        </activity>
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+        <activity
+            android:name=".ListFilmActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".SignUpActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-
-        </activity>
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
         <activity
             android:name=".SignInActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShowProfileActivity"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-        </activity>
+        <activity
+            android:name=".ShowProfileActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+        <activity android:name=".FilmDetailActivity"></activity>
     </application>
 
 </manifest>
