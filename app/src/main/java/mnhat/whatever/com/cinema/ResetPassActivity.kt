@@ -51,7 +51,27 @@ class ResetPassActivity : AppCompatActivity() {
                     view.background.clearColorFilter()
                     view.invalidate()
                 }
+            }
+            return@setOnTouchListener true
+        }
 
+        btn_SignIn.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    view.background.setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP)
+                    view.invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    run {
+                        finish()
+                    }
+                    view.background.clearColorFilter()
+                    view.invalidate()
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    view.background.clearColorFilter()
+                    view.invalidate()
+                }
             }
             return@setOnTouchListener true
         }

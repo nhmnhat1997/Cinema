@@ -35,7 +35,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="30dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -85,6 +85,30 @@
                     android:layout_marginTop="17dp"
                     android:background="@drawable/button"
                     android:text="ĐẶT LẠI"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/tv_or2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal|center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical|center_horizontal|center"
+                    android:text="hoặc"
+                    android:textColor="#ffffff" />
+
+                <Button
+                    android:id="@+id/btn_SignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginTop="17dp"
+                    android:background="@drawable/button"
+                    android:text="ĐĂNG NHẬP"
                     android:textColor="#FFFFFF" />
 
             </LinearLayout>
