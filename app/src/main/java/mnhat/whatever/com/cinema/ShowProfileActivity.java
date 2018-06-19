@@ -351,13 +351,13 @@ public class ShowProfileActivity extends AppCompatActivity {
 
             }
         });
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        /*swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadProfile();
                 loadList();
             }
-        });
+        });*/
     }
 
     private void selectImage() {
@@ -614,7 +614,7 @@ public class ShowProfileActivity extends AppCompatActivity {
                     List<FilmData.Movie> temp = response.body().getMovies();
                     Collections.reverse(temp);
                     mAdapter.updateData(temp);
-                    swipeRefreshLayout.setRefreshing(false);
+                    //swipeRefreshLayout.setRefreshing(false);
 
                 } else {
                     Toast.makeText(ShowProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
