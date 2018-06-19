@@ -100,7 +100,9 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        if (mItems != null)
+            return mItems.size();
+        else return 0;
     }
 
     public void updateData(List<FilmData.Movie> items) {
@@ -123,20 +125,31 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
     }
 
     public void filter(String query) {
-        mItems.clear();
-        for (FilmData.Movie movie : temp) {
-            if (movie.getTitle().toLowerCase(Locale.getDefault()).contains(query)
-                    || VNCharacterUtils.removeAccent(movie.getTitle().toLowerCase(Locale.getDefault())).contains(query)) {
-                mItems.add(movie.clone());
+        if (!query.equals("")) {
+            mItems.clear();
+            for (FilmData.Movie movie : temp) {
+                if (movie.getTitle().toLowerCase(Locale.getDefault()).contains(query)
+                        || VNCharacterUtils.removeAccent(movie.getTitle().toLowerCase(Locale.getDefault())).contains(query)) {
+                    mItems.add(movie.clone());
+                }
             }
+            notifyDataSetChanged();
         }
-        notifyDataSetChanged();
+        else {
+            mItems = new ArrayList<FilmData.Movie>(temp);
+            notifyDataSetChanged();
+
+        }
     }
 
     public void backupData(List<FilmData.Movie> data) {
         temp = new ArrayList<>();
         for(FilmData.Movie movie:data)
             temp.add(movie.clone());
+    }
+
+    public List<FilmData.Movie> getBackupData(){
+        return temp;
     }
 }
 

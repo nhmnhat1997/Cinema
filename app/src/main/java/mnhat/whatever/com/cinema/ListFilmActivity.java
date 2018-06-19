@@ -159,15 +159,9 @@ public class ListFilmActivity extends AppCompatActivity implements SearchView.On
 
     @Override
     public boolean onQueryTextChange(String s) {
-        String newQuery = s.toLowerCase();
-        if (newQuery.equals("")){
-            loadList();
-            mAdapter.notifyDataSetChanged();
-            return true;
-        }
-        else {
-            mAdapter.filter(s);
-        }
+        //String newQuery = s.toLowerCase();
+        mAdapter.filter(s);
+
 
         return true;
     }
