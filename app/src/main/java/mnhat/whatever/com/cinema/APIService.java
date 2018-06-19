@@ -58,4 +58,8 @@ public interface APIService {
     Call<ResponseBody> updateProfile(
             @Header("x-access-token") String token,
             @PartMap() Map<String, RequestBody> partMap);
+
+    @POST("/api/v1/auth/request-reset-password")
+    @FormUrlEncoded
+    Call<ResetPassData> resetPass(@Field("email") String email);
 }

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +29,7 @@ import retrofit2.Response;
 public class SignInActivity extends AppCompatActivity {
 
     EditText email, password;
-    TextView tSignIn, tOr;
+    TextView tSignIn, tOr, tReset;
     IconTextView tEmail, tPassword;
     Button signIn, signUp;
     Animation up, down, left, right;
@@ -35,6 +37,7 @@ public class SignInActivity extends AppCompatActivity {
     APIService mAPIService;
     String e,p;
     ScrollView screen;
+    LinearLayout layoutReset;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,9 +58,13 @@ public class SignInActivity extends AppCompatActivity {
         signUp = (Button) findViewById(R.id.btn_SignUp);
         tSignIn = (TextView) findViewById(R.id.tv_sign_in);
         tOr = (TextView) findViewById(R.id.tv_or);
+        tReset = (TextView) findViewById(R.id.tv_reset);
         tEmail = (IconTextView) findViewById(R.id.tv_mail_icon);
         tPassword = (IconTextView) findViewById(R.id.tv_lock_icon1);
         screen = (ScrollView) findViewById(R.id.screen);
+        layoutReset = (LinearLayout) findViewById(R.id.layout_resetPass);
+
+        tReset.setPaintFlags(tReset.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         SharedPreferences temp = getSharedPreferences("signInLog",MODE_PRIVATE);
         email.setText(temp.getString("email",""));
@@ -81,6 +88,14 @@ public class SignInActivity extends AppCompatActivity {
         password.startAnimation(right);
 
         mAPIService = APIUtils.getAPIService();
+
+        layoutReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignInActivity.this,ResetPassActivity.class);
+                startActivity(intent);
+            }
+        });
 
         screen.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -173,6 +188,7 @@ public class SignInActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
+
 
     public void goSignIn(final EditText email, final EditText password){
         final ProgressDialog loadDialog = new ProgressDialog(SignInActivity.this,R.style.AlertDialogCustom);

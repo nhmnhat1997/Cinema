@@ -86,6 +86,17 @@ public class Utility {
         return 0;
     }
 
-
+    public int checkEmail(String email){
+        if (email.equals("")){
+            return 1;
+        }
+        else {
+            Matcher matcher = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE).matcher(email);
+            if (!matcher.find()){
+                return 2;
+            }
+        }
+        return 0;
+    }
 
 }

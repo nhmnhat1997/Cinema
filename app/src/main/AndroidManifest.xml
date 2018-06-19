@@ -16,13 +16,13 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".CreateMovieActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ListFilmActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".SignUpActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".SignInActivity"
             android:windowSoftInputMode="stateHidden">
@@ -34,8 +34,9 @@
         </activity>
         <activity
             android:name=".ShowProfileActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
-        <activity android:name=".FilmDetailActivity"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".FilmDetailActivity" />
+        <activity android:name=".ResetPassActivity"></activity>
     </application>
 
 </manifest>
