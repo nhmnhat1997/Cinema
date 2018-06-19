@@ -86,6 +86,12 @@ public class FilmData {
             public void setUsername(String username) {
                 this.username = username;
             }
+            public Creator(String avatar, String id, String email, String username){
+                this.avatar = avatar;
+                this.id = id;
+                this.email = email;
+                this.username = username;
+            }
         }
 
         public String getId() {
@@ -159,6 +165,25 @@ public class FilmData {
         public void setV(int v) {
             this.v = v;
         }
+
+        public Movie clone(){
+            Movie p = new Movie();
+            p.setId(this.id);
+            p.setTitle(this.title);
+            p.setGenre(this.genre);
+            p.setDate(this.date);
+            p.setDescription(this.description);
+            p.setCover(this.cover);
+            p.setCreatedAt(this.createdAt);
+            p.setV(this.v);
+            if(this.getCreator() == null){
+                p.creator = null;
+            }else {
+                p.creator = new Creator(this.getCreator().getAvatar(), this.getCreator().getId(),
+                        this.getCreator().getEmail(), this.getCreator().getUsername());
+            }
+            return p;
+        }
     }
 
     public int getStatus() {
@@ -184,4 +209,5 @@ public class FilmData {
     public void setMovies(ArrayList<Movie> movies) {
         this.movies = movies;
     }
+
 }

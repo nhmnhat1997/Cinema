@@ -4,29 +4,34 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.content.res.FontResourcesParserCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHolder> {
     private List<FilmData.Movie> mItems;
+    private List<FilmData.Movie> temp;
     private Context mContext;
     private PostItemListener mItemListener;
     String domain = "https://nam-cinema.herokuapp.com/";
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView titleTv;
         PostItemListener mItemListener;
-        TextView txvName,txvGerne,txvDate;
+        TextView txvName, txvGerne, txvDate;
         ImageView cover;
 
 
@@ -54,6 +59,8 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
         mItems = data;
         mContext = context;
         mItemListener = itemListener;
+
+
     }
 
     @Override
@@ -65,6 +72,8 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
         View postView = inflater.inflate(R.layout.item_film, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(postView, this.mItemListener);
+
+        backupData(mItems);
         return viewHolder;
     }
 
@@ -80,7 +89,7 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
         ImageView cover = holder.cover;
         Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(domain + item.getCover()).into(cover);
         name.setText(item.getTitle());
-        if(name.getLineCount() > 1){
+        if (name.getLineCount() > 1) {
             int lineEndIndex = name.getLayout().getLineEnd(0);
             String text = name.getText().subSequence(0, lineEndIndex - 3) + "\u2026";
             name.setText(text);
@@ -105,13 +114,29 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
     }
 
 
-
     private FilmData.Movie getItem(int adapterPosition) {
         return mItems.get(adapterPosition);
     }
 
     public interface PostItemListener {
         void onPostClick(long id);
+    }
+
+    public void filter(String query) {
+        mItems.clear();
+        for (FilmData.Movie movie : temp) {
+            if (movie.getTitle().toLowerCase(Locale.getDefault()).contains(query)
+                    || VNCharacterUtils.removeAccent(movie.getTitle().toLowerCase(Locale.getDefault())).contains(query)) {
+                mItems.add(movie.clone());
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void backupData(List<FilmData.Movie> data) {
+        temp = new ArrayList<>();
+        for(FilmData.Movie movie:data)
+            temp.add(movie.clone());
     }
 }
 

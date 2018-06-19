@@ -20,7 +20,8 @@
 
         </activity>
 
-        <activity android:name=".ListFilmActivity">
+        <activity android:name=".ListFilmActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         </activity>
         <activity
