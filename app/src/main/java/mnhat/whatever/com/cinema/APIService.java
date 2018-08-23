@@ -16,35 +16,37 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
 
 public interface APIService {
     @Multipart
-    @POST("/api/v1/movies/")
+    @POST("/api/cinema/")
     Call<ResponseBody> uploadFileWithPartMap(
             @Header("x-access-token") String token,
             @PartMap() Map<String, RequestBody> partMap,
             @Part MultipartBody.Part file);
 
 
-    @GET("/api/v1/movies/")
+    @GET("/api/cinema/")
     Call<FilmData> getFilmData();
 
-    @POST("/api/v1/auth/sign-up/")
+    @POST("/api/auth/signup/")
     Call<SignUpData> signUpInfo(@Body SignUpData data);
 
-    @POST("/api/v1/auth/sign-in/")
+    @POST("/api/auth/signin/")
     @FormUrlEncoded
     Call<SignInResponse> singIn(@Field("email") String email,
                                 @Field("password") String password);
 
-    @GET("/api/v1/users/")
-    Call<UserProfileData> getProfileInfo(@Header("x-access-token") String token);
+    @GET("/api/user/{id}")
+    Call<UserProfileData> getProfileInfo(@Header("x-access-token") String token, @Path("id") String creatorId);
 
-    @POST("/api/v1/auth/change-password/")
+    @PUT("/api/user/{id}/change-password/")
     @FormUrlEncoded
     Call<Password> changePass(@Header("x-access-token") String token,
-                              @Field("oldPassword") String oldPassword,
-                              @Field("password") String password);
+                              @Path("id") String userId,
+                              @Field("currentPass") String oldPassword,
+                              @Field("newPass") String password);
 
     @Multipart
     @PUT("/api/v1/users/")
@@ -54,12 +56,21 @@ public interface APIService {
             @Part MultipartBody.Part file);
 
     @Multipart
-    @PUT("/api/v1/users/")
+    @PUT("/api/user/{id}/")
     Call<ResponseBody> updateProfile(
             @Header("x-access-token") String token,
+            @Path("id") String userId,
             @PartMap() Map<String, RequestBody> partMap);
 
-    @POST("/api/v1/auth/request-reset-password")
+    @Multipart
+    @PUT("/api/user/{id}/change-avatar/")
+    Call<ResponseBody> updateAvatar(
+            @Header("x-access-token") String token,
+            @Path("id") String userId,
+            @PartMap() Map<String, RequestBody> partMap,
+            @Part MultipartBody.Part file);
+
+    @POST("/api/auth/reset-password")
     @FormUrlEncoded
     Call<ResetPassData> resetPass(@Field("email") String email);
 }

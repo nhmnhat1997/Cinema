@@ -132,7 +132,8 @@
             android:layout_height="45dp"
             android:layout_marginTop="25dp"
             android:orientation="horizontal"
-            android:paddingLeft="25dp">
+            android:paddingLeft="25dp"
+            android:visibility="gone">
 
             <mnhat.whatever.com.cinema.IconTextView
                 android:layout_width="36dp"
@@ -181,6 +182,7 @@
         android:id="@+id/layout_button"
         android:layout_width="match_parent"
         android:layout_height="94dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button

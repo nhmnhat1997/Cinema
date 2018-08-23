@@ -17,7 +17,7 @@ public class UserFilmDataAdapter extends RecyclerView.Adapter<UserFilmDataAdapte
     private List<FilmData.Movie> mItems;
     private Context mContext;
     private PostItemListener mItemListener;
-    String domain = "https://nam-cinema.herokuapp.com";
+    String domain = "https://cinema-web-training.herokuapp.com";
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

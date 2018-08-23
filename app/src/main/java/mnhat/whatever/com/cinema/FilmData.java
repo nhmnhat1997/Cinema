@@ -11,87 +11,43 @@ public class FilmData {
     @SerializedName("message")
     private String message;
 
-    @SerializedName("movies")
+    @SerializedName("films")
     private ArrayList<Movie> movies;
 
     public class Movie {
         @SerializedName("_id")
         private String id;
 
-        @SerializedName("title")
+        @SerializedName("name")
         private String title;
 
         @SerializedName("genre")
         private String genre;
 
-        @SerializedName("release")
-        private String date;
+        @SerializedName("releaseDate")
+        private long date;
 
-        @SerializedName("description")
+        @SerializedName("content")
         private String description;
 
-        @SerializedName("cover")
+        @SerializedName("posterURL")
         private String cover;
 
-        @SerializedName("creator")
-        private Creator creator;
+        @SerializedName("creatorId")
+        private String creatorId;
 
-        @SerializedName("createdAt")
-        private String createdAt;
+        @SerializedName("createdDate")
+        private long createdAt;
 
         @SerializedName("__v")
         private int v;
 
-        public class Creator {
-            @SerializedName("avatar")
-            private String avatar;
+        public String getCreatorId() {
+            return creatorId;
+        }
 
-            @SerializedName("_id")
-            private String id;
-
-            @SerializedName("email")
-            private String email;
-
-            @SerializedName("username")
-            private String username;
-
-            public String getAvatar() {
-                return avatar;
-            }
-
-            public void setAvatar(String avatar) {
-                this.avatar = avatar;
-            }
-
-            public String getId() {
-                return id;
-            }
-
-            public void setId(String id) {
-                this.id = id;
-            }
-
-            public String getEmail() {
-                return email;
-            }
-
-            public void setEmail(String email) {
-                this.email = email;
-            }
-
-            public String getUsername() {
-                return username;
-            }
-
-            public void setUsername(String username) {
-                this.username = username;
-            }
-            public Creator(String avatar, String id, String email, String username){
-                this.avatar = avatar;
-                this.id = id;
-                this.email = email;
-                this.username = username;
-            }
+        public void setCreatorId(String creatorId) {
+            this.creatorId = creatorId;
         }
 
         public String getId() {
@@ -118,11 +74,11 @@ public class FilmData {
             this.genre = genre;
         }
 
-        public String getDate() {
+        public long getDate() {
             return date;
         }
 
-        public void setDate(String date) {
+        public void setDate(long date) {
             this.date = date;
         }
 
@@ -142,19 +98,11 @@ public class FilmData {
             this.cover = cover;
         }
 
-        public Creator getCreator() {
-            return creator;
-        }
-
-        public void setCreator(Creator creator) {
-            this.creator = creator;
-        }
-
-        public String getCreatedAt() {
+        public long getCreatedAt() {
             return createdAt;
         }
 
-        public void setCreatedAt(String createdAt) {
+        public void setCreatedAt(long createdAt) {
             this.createdAt = createdAt;
         }
 
@@ -176,12 +124,7 @@ public class FilmData {
             p.setCover(this.cover);
             p.setCreatedAt(this.createdAt);
             p.setV(this.v);
-            if(this.getCreator() == null){
-                p.creator = null;
-            }else {
-                p.creator = new Creator(this.getCreator().getAvatar(), this.getCreator().getId(),
-                        this.getCreator().getEmail(), this.getCreator().getUsername());
-            }
+            p.setCreatorId(this.creatorId);
             return p;
         }
     }

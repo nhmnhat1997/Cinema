@@ -25,11 +25,11 @@ public class UserProfileData {
         @Expose
         private String email;
 
-        @SerializedName("username")
+        @SerializedName("name")
         @Expose
         private String username;
 
-        @SerializedName("avatar")
+        @SerializedName("avatarURL")
         @Expose
         private String avatar;
 

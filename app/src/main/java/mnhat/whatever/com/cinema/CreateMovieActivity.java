@@ -41,6 +41,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -504,24 +506,35 @@ public class CreateMovieActivity extends AppCompatActivity {
     }
 
     public void createMovie(){
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         final ProgressDialog loadDialog = new ProgressDialog(CreateMovieActivity.this,R.style.AlertDialogCustom);
         loadDialog.setMessage("Loading");
         loadDialog.show();
+        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), mImageFile);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("cover", mImageFile.getName(), reqFile);
-
+        MultipartBody.Part body = MultipartBody.Part.createFormData("file", mImageFile.getName(), reqFile);
+        String releaseDate = "";
+        try {
+            Date d = df.parse(date.getText().toString());
+            long milliseconds = d.getTime();
+            releaseDate = new String(String.valueOf(milliseconds));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 // create a map of data to pass along
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), filmName.getText().toString());
         RequestBody genre = RequestBody.create(MediaType.parse("text/plain"),gerne.getSelectedItem().toString());
-        RequestBody release = RequestBody.create(MediaType.parse("text/plain"), date.getText().toString());
+        RequestBody release = RequestBody.create(MediaType.parse("text/plain"), releaseDate);
         RequestBody descript = RequestBody.create(MediaType.parse("text/plain"), description.getText().toString());
+        RequestBody creatorId = RequestBody.create(MediaType.parse("text/plain"), pre.getString("userId",""));
+
 
         HashMap<String, RequestBody> map = new HashMap<>();
-        map.put("title", title);
+        map.put("name", title);
         map.put("genre", genre);
-        map.put("release", release);
-        map.put("description", descript);
-        SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
+        map.put("releaseDate", release);
+        map.put("content", descript);
+        map.put("creatorId",creatorId);
         String token = pre.getString("token","");
         mAPIService = APIUtils.getAPIService();
         mAPIService.uploadFileWithPartMap(token ,map, body).enqueue(new Callback<ResponseBody>() {

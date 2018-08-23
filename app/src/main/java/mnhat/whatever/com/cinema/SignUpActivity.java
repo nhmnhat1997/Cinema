@@ -229,10 +229,12 @@ public class SignUpActivity extends AppCompatActivity {
                     String token = response.body().getToken();
                     e = email.getText().toString();
                     p = password.getText().toString();
+                    String userId = response.body().getUser().getId();
                     SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
                     SharedPreferences.Editor editor = pre.edit();
                     editor.putString("token",token);
                     editor.putBoolean("isLogin",isLogin);
+                    editor.putString("userId", userId);
                     editor.commit();
                     SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
                     SharedPreferences.Editor logIn = pre_signIn.edit();

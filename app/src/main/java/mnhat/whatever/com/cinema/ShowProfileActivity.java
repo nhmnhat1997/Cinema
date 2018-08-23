@@ -81,7 +81,7 @@ public class ShowProfileActivity extends AppCompatActivity {
     Activity mActivity;
     SwipeRefreshLayout swipeRefreshLayout;
 
-    String domain = "https://nam-cinema.herokuapp.com/";
+    String domain = "https://cinema-web-training.herokuapp.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -632,10 +632,11 @@ public class ShowProfileActivity extends AppCompatActivity {
     public void changePass(EditText oldPass, EditText newPass, final AlertDialog dialog) {
         SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
         String token = pre.getString("token", "");
+        String userId = pre.getString("userId","");
         final ProgressDialog loadDialog = new ProgressDialog(ShowProfileActivity.this, R.style.AlertDialogCustom);
         loadDialog.setMessage("Loading");
         loadDialog.show();
-        mService.changePass(token, oldPass.getText().toString(), newPass.getText().toString()).enqueue(new Callback<Password>() {
+        mService.changePass(token,userId,oldPass.getText().toString(), newPass.getText().toString()).enqueue(new Callback<Password>() {
             @Override
             public void onResponse(Call<Password> call, Response<Password> response) {
                 if (response.isSuccessful()) {
@@ -665,7 +666,8 @@ public class ShowProfileActivity extends AppCompatActivity {
     public void loadProfile() {
         SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
         String token = pre.getString("token", "");
-        mService.getProfileInfo(token).enqueue(new Callback<UserProfileData>() {
+        String userId = pre.getString("userId", "");
+        mService.getProfileInfo(token, userId).enqueue(new Callback<UserProfileData>() {
             @Override
             public void onResponse(Call<UserProfileData> call, Response<UserProfileData> response) {
                 if (response.isSuccessful()) {
@@ -694,24 +696,25 @@ public class ShowProfileActivity extends AppCompatActivity {
         HashMap<String, RequestBody> map = new HashMap<>();
         if (userName != null) {
             RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName.getText().toString());
-            map.put("username", username);
+            map.put("name", username);
         } else {
             RequestBody username = RequestBody.create(MediaType.parse("text/plain"), "");
-            map.put("username", username);
+            map.put("name", username);
         }
 
-        if (phoneNum != null) {
+        /*if (phoneNum != null) {
             RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), phoneNum.getText().toString());
             map.put("phone", phone);
         } else {
             RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), "");
             map.put("phone", phone);
-        }
+        }*/
 
 
         SharedPreferences pre = getSharedPreferences("access_token", MODE_PRIVATE);
         String token = pre.getString("token", "");
-        mService.updateProfile(token, map).enqueue(new Callback<ResponseBody>() {
+        String userId = pre.getString("userId","");
+        mService.updateProfile(token, userId,map).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -741,18 +744,19 @@ public class ShowProfileActivity extends AppCompatActivity {
             loadDialog.setMessage("Loading");
             loadDialog.show();
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), mImageFile);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("cover", mImageFile.getName(), reqFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", mImageFile.getName(), reqFile);
 
             RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName.getText().toString());
-            RequestBody phone = RequestBody.create(MediaType.parse("text/plain"),phoneNum.getText().toString());
+            //RequestBody phone = RequestBody.create(MediaType.parse("text/plain"),phoneNum.getText().toString());
 
 
             HashMap<String, RequestBody> map = new HashMap<>();
             map.put("username", username);
-            map.put("phone", phone);
+            //map.put("phone", phone);
             SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
             String token = pre.getString("token","");
-            mService.uploadFileWithPartMap(token ,map, body).enqueue(new Callback<ResponseBody>() {
+            String userId = pre.getString("userId","");
+            mService.updateAvatar(token,userId,map,body).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if(response.isSuccessful()) {

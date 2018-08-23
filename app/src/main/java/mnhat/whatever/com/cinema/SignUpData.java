@@ -9,7 +9,7 @@ public class SignUpData {
     @SerializedName("email")
     @Expose
     private String email;
-    @SerializedName("username")
+    @SerializedName("name")
     @Expose
     private String username;
     @SerializedName("password")

@@ -17,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +28,7 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
     private List<FilmData.Movie> temp;
     private Context mContext;
     private PostItemListener mItemListener;
-    String domain = "https://nam-cinema.herokuapp.com/";
+    String domain = "https://cinema-web-training.herokuapp.com/";
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -85,6 +87,7 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(FilmDataAdapter.ViewHolder holder, int position) {
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.choose_film);
 
@@ -101,7 +104,7 @@ public class FilmDataAdapter extends RecyclerView.Adapter<FilmDataAdapter.ViewHo
             name.setText(text);
         }
         gerne.setText(item.getGenre());
-        date.setText(item.getDate());
+        date.setText(df.format(item.getDate()));
     }
 
     @Override

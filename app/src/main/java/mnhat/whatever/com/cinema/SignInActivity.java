@@ -205,11 +205,13 @@ public class SignInActivity extends AppCompatActivity {
 
                     Boolean isLogin = true;
                     String token = response.body().getToken();
+                    String userId = response.body().getUser().getId();
                     e = email.getText().toString();
                     p = password.getText().toString();
                     SharedPreferences pre = getSharedPreferences("access_token",MODE_PRIVATE);
                     SharedPreferences.Editor editor = pre.edit();
                     editor.putString("token",token);
+                    editor.putString("userId", userId);
                     editor.putBoolean("isLogin",isLogin);
                     editor.commit();
                     SharedPreferences pre_signIn = getSharedPreferences("signInLog",MODE_PRIVATE);
